@@ -1,0 +1,56 @@
+body {
+  font-family: 'Roboto'; }
+
+#main {
+  height: 500px;
+  background: url("../img/main.jpg") rgba(9, 5, 99, 0.6);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: multiply; }
+  #main .container-fluid {
+    height: 100%; }
+  #main #card {
+    background-color: #fff;
+    border-radius: 10px; }
+
+.headingMain {
+  font-size: 25px;
+  text-align: center;
+  font-weight: bold; }
+
+#info {
+  background-color: #d6d6d6; }
+
+.iconMain {
+  font-size: 20px; }
+  .iconMain i {
+    font-size: 40px;
+    color: white;
+    transition-duration: 0.3s; }
+    .iconMain i:hover {
+      font-size: 45px; }
+  .iconMain .square {
+    padding: 15px;
+    background-color: #090563;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px; }
+  .iconMain .col {
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+
+.borderUp {
+  border-top: 3px solid #acacac;
+  border-radius: 5px; }
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+/*# sourceMappingURL=style.css.map */

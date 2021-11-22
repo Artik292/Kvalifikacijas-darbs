@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Register</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {% for field in registration_form %}
+            <p>
+               {{field.label_tag}} 
+               {{field}}
+
+               {% if field.help_text %}
+                    <small>{{field.help_text}}</small>
+               {% endif %}
+
+               {% for errors in field.errors %}
+                    <small>{{error}}</small>
+               {% endfor %}
+            </p>
+        {% endfor %}
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+<section id="main">
+    <div class="container-fluid d-flex justify-content-center align-items-center">
+        <div id="card" class="p-3 col-xl-3 col-10 col-md-5">
+            <form action="">
+                <div class="row">
+                    <div class="col headingMain">
+                        Enter Account:
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <input type="login" placeholder="Enter login" class="form-control" name='login'>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <input type="password" placeholder="Enter password" class="form-control" name='login'>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <button class="btn btn-primary w-100" type="submit">Log In</button>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <a href="{% url 'register' %}" class="btn btn-success w-100">Create New Account</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<section id="info">
+    <div class="container-fluid py-3">
+        <div class="row">
+            <div class="col headingMain">
+                Welcome to DICOM VIEWER page
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col iconMain">
+                <div class="row">
+                    <div class="col">
+                        <div class="square">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        Use platform on any device
+                    </div>
+                </div>
+            </div>
+            <div class="col iconMain">
+                <div class="row">
+                    <div class="col">
+                        <div class="square">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        Open DICOM files
+                    </div>
+                </div>
+            </div>
+            <div class="col iconMain">
+                <div class="row">
+                    <div class="col">
+                        <div class="square">
+                            <i class="fas fa-signature"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        Write descriptions and save them
+                    </div>
+                </div>
+            </div>
+            <div class="col iconMain">
+                <div class="row">
+                    <div class="col">
+                        <div class="square">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        Use tools for research
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 justify-content-center">
+            <div class="col-11 borderUp footer pt-3">
+                &copy; Copyright 2021 DICOM VIEWER
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
