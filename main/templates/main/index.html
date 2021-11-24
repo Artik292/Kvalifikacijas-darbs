@@ -7,7 +7,7 @@
 <section id="main">
     <div class="container-fluid d-flex justify-content-center align-items-center">
         <div id="card" class="p-3 col-xl-3 col-10 col-md-5">
-            <form action="">
+            <form method="POST">{% csrf_token %}
                 <div class="row">
                     <div class="col headingMain">
                         Enter Account:
@@ -15,12 +15,12 @@
                 </div>
                 <div class="row mt-2">
                     <div class="col">
-                        <input type="login" placeholder="Enter login" class="form-control" name='login'>
+                        <input type="login" placeholder="Enter login" class="form-control" name='email'>
                     </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col">
-                        <input type="password" placeholder="Enter password" class="form-control" name='login'>
+                        <input type="password" placeholder="Enter password" class="form-control" name='password'>
                     </div>
                 </div>
                 <div class="row mt-2">

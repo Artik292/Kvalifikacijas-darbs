@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from account.forms import RegistrationForm
+from account.forms import RegistrationForm, ApplicationForm
 from django.views.decorators.csrf import csrf_protect
 
 def registration_view(request):
@@ -20,3 +20,18 @@ def registration_view(request):
         form = RegistrationForm()
         context['registration_form'] = form
     return render(request, 'main/register.html', context) 
+
+
+def docAppl_view(request):
+    context = {}
+    if request.POST:
+        form = ApplicationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('thankYouPage')
+        else:
+            context['application_form'] = form
+    else:
+        form = ApplicationForm()
+        context['application_form'] = form
+    return render(request, 'main/doctorApplication.html', context) 

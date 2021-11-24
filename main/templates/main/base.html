@@ -15,13 +15,18 @@
         <nav class="navbar fixed-top navbar-light bg-light">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'home' %}">DICOM VIEWER</a>
-            </div>
-            <div>
-                <a href="{% url 'register' %}">Register</a>
-            </div>
-            <div>
-                <div>Hello, {{request.user}} </div>
-                <!-- <a href="">Logout</a> -->
+                <div>
+                    <a href="{% url 'register' %}">Register</a>
+                </div>
+                <div>
+                    <a href="{% url 'docAppl' %}">Applications</a>
+                </div>
+                {% if request.user.is_authenticated %}
+                <div>
+                    <div>Hello, {{request.user}} </div>
+                    <a href="{% url 'logout' %}">Logout</a>
+                </div>
+                {% endif %}
             </div>
           </nav>
     </section>

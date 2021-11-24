@@ -52,10 +52,37 @@ class Account(AbstractBaseUser):
     date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
     is_admin = models.BooleanField(default=False)
-    is_doctor = models.BooleanField(default=False)
-    is_patient = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    is_doctor = models.BooleanField(default=False)
+    first_name = models.CharField(max_length=100, unique=False)
+    last_name = models.CharField(max_length=100, unique=False)
+    pers_code = models.CharField(max_length=11, unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username','first_name','last_name','pers_code']
+
+    objects = myAccountManager()
+
+    def _str_(self):
+        return self.email
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+    
+    def has_module_perms(self, app_label):
+        return True
+
+
+class Doctor(AbstractBaseUser):
+    email = models.EmailField(verbose_name="email",max_length=60, unique=True)
+    username = models.CharField(max_length=30, unique=True)
+    date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
+    last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
+    is_admin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_doctor = models.BooleanField(default=True)
     first_name = models.CharField(max_length=100, unique=False)
     last_name = models.CharField(max_length=100, unique=False)
     pers_code = models.CharField(max_length=11, unique=True)
