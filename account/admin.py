@@ -15,7 +15,7 @@ class DoctorAdmin(admin.ModelAdmin):
         # queryset.delete()
         user = queryset.first()
         for user in queryset:
-            newUser = Account.objects.create(first_name=user.first_name,last_name=user.last_name,email=user.email,username=user.username,pers_code=user.pers_code)
+            newUser = Account.objects.create(first_name=user.first_name,last_name=user.last_name,email=user.email,username=user.username,pers_code=user.pers_code,password=user.password,is_doctor=user.is_doctor)
             newUser.save()
         queryset.delete()
         

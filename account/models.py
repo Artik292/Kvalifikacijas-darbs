@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.shortcuts import reverse
 
 
 class myAccountManager(BaseUserManager):
@@ -72,6 +73,11 @@ class Account(AbstractBaseUser):
     
     def has_module_perms(self, app_label):
         return True
+
+    def get_absolute_url(self):
+        if self.is_doctor:
+            return reverse('dataBase')
+        return reverse('home')
 
 
 class Doctor(AbstractBaseUser):

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, authenticate
 from account.forms import RegistrationForm, ApplicationForm
 from django.views.decorators.csrf import csrf_protect
@@ -19,7 +19,7 @@ def registration_view(request):
     else:
         form = RegistrationForm()
         context['registration_form'] = form
-    return render(request, 'main/register.html', context) 
+    return render(request, 'main/register.html', {'title': 'Registration', 'context' : context}) 
 
 
 def docAppl_view(request):
@@ -34,4 +34,4 @@ def docAppl_view(request):
     else:
         form = ApplicationForm()
         context['application_form'] = form
-    return render(request, 'main/doctorApplication.html', context) 
+    return render(request, 'main/doctorApplication.html', {'title': 'Doc. Application', 'context' : context}) 

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.views import View
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
@@ -6,7 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from account.models import Account
 
 from account.forms import AccountAuthenticationForm
 
@@ -25,7 +26,7 @@ def index(request):
 
             if user:
                 login(request,user)
-                return redirect("home")
+                return redirect(user)
     
     else:
         form = AccountAuthenticationForm()
@@ -35,6 +36,12 @@ def index(request):
 
 def thankYouPage(request):
     return render(request, 'main/thankYouPage.html')
+
+
+@user_passes_test(lambda u: u.is_doctor,login_url='home')
+@login_required(login_url='home')
+def dataBase(request):
+    return render(request, 'main/dataBase.html')
 
 
 # def register(request):
