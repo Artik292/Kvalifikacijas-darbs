@@ -14,8 +14,8 @@ from account.forms import AccountAuthenticationForm
 
 def index(request):
     user = request.user
-    # if user.is_authenticated:
-    #     return redirect("thankYouPage")
+    if user.is_authenticated:
+        return redirect("dataBase")
 
     if request.POST:
         form = AccountAuthenticationForm(request.POST)
@@ -37,11 +37,6 @@ def index(request):
 def thankYouPage(request):
     return render(request, 'main/thankYouPage.html')
 
-
-@user_passes_test(lambda u: u.is_doctor,login_url='home')
-@login_required(login_url='home')
-def dataBase(request):
-    return render(request, 'main/dataBase.html')
 
 
 # def register(request):

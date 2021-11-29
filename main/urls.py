@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -13,5 +13,5 @@ urlpatterns = [
     path('docAppl', docAppl_view, name='docAppl'),
     path('thankYouPage', views.thankYouPage, name='thankYouPage'),
     path('logout', views.logoutUser, name='logout'),
-    path('dataBase', views.dataBase, name="dataBase")
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+

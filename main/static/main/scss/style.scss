@@ -191,7 +191,17 @@ tbody{
 
 #viewer{
   height: 100%;
+  display: flex;
+  flex-flow: column;
   background-color: black;
+}
+
+.flex01{
+  flex: 0 1 auto;
+}
+
+.flex11{
+  flex: 1 1 auto;
 }
 
 html {
@@ -206,7 +216,7 @@ html {
 }
 
 #instruments{
-  height: 12%;
+  flex: 0 1 auto;
   overflow: auto;
   background-color: $lightBlack;
   color:white;
@@ -250,7 +260,7 @@ html {
 }
 
 #viewerBox{
-  height: 88%;
+  height: 100%;
 }
 
 #section{
@@ -278,7 +288,6 @@ html {
     padding: 5px;
     background-color: #fff;
     color: black;
-    width: 100px;
     z-index: 2;
     display: none;
     box-shadow: 0 2px 2px -2px rgba(0,0,0,.2);
