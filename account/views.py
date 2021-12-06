@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, authenticate
-from account.forms import RegistrationForm, ApplicationForm
+from account.forms import PatientRegistrationForm, ApplicationForm
 from django.views.decorators.csrf import csrf_protect
+from django.contrib import messages
+from django.conf import settings
 
 def registration_view(request):
     context = {}
     if request.POST:
-        form = RegistrationForm(request.POST)
+        form = PatientRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
             email = form.cleaned_data.get("email")
@@ -15,10 +17,10 @@ def registration_view(request):
             login(request, account)
             return redirect('home')
         else:
-            context['registration_form'] = form
+            context['PatientRegistrationForm'] = form
     else:
-        form = RegistrationForm()
-        context['registration_form'] = form
+        form = PatientRegistrationForm()
+        context['PatientRegistrationForm'] = form
     return render(request, 'main/register.html', {'title': 'Registration', 'context' : context}) 
 
 
@@ -30,8 +32,9 @@ def docAppl_view(request):
             form.save()
             return redirect('thankYouPage')
         else:
-            context['application_form'] = form
+            context['ApplicationForm'] = form
+            messages.error(request,'username or password not correct')
     else:
         form = ApplicationForm()
-        context['application_form'] = form
+        context['ApplicationForm'] = form
     return render(request, 'main/doctorApplication.html', {'title': 'Doc. Application', 'context' : context}) 

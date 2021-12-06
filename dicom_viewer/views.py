@@ -6,9 +6,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
-from account.models import Account
+# from account.models import Patient
 
-from account.forms import AccountAuthenticationForm
+# from account.forms import AccountAuthenticationForm
 
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 @login_required(login_url='home')

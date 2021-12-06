@@ -7,35 +7,38 @@ from .forms import CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
-from account.models import Account
+# from account.models import Patient
 
-from account.forms import AccountAuthenticationForm
+# from account.forms import AccountAuthenticationForm
 
 
 def index(request):
-    user = request.user
-    if user.is_authenticated:
-        return redirect("dataBase")
+    # user = request.user
+    # if user.is_authenticated:
+    #     return redirect("user")
 
-    if request.POST:
-        form = AccountAuthenticationForm(request.POST)
-        if form.is_valid():
-            email = request.POST["email"]
-            password = request.POST["password"]
-            user = authenticate(email=email, password=password)
+    # if request.POST:
+    #     form = AccountAuthenticationForm(request.POST)
+    #     if form.is_valid():
+    #         email = request.POST["email"]
+    #         password = request.POST["password"]
+    #         user = authenticate(email=email, password=password)
 
-            if user:
-                login(request,user)
-                return redirect(user)
+    #         if user:
+    #             login(request,user)
+    #             return redirect(user)
     
-    else:
-        form = AccountAuthenticationForm()
+    # else:
+    #     form = AccountAuthenticationForm()
 
     return render(request, 'main/index.html')
 
 
 def thankYouPage(request):
     return render(request, 'main/thankYouPage.html')
+
+def User(request):
+    return render(request, 'main/patient.html')
 
 
 

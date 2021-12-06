@@ -1,36 +1,59 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate
-from django.forms import ModelForm
+from django.db import transaction
+from .models import Patient, Doctor, User, DoctorApplication
+# from django.contrib.auth import authenticate
+# from django.forms import ModelForm
 
-from account.models import Account, Doctor
+# # from account.models import Patient,Doctor,Admin,DoctorApplication
 
-class RegistrationForm(UserCreationForm):
-    email = forms.EmailField(max_length=60, help_text='Required. Add a valid email address')
+class PatientRegistrationForm(UserCreationForm):
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
 
-    class Meta:
-        model = Account
-        fields = ("email","username","first_name","last_name","pers_code","password1","password2")
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ("email","first_name","last_name","pers_code","password1","password2")
+
+    @transaction.atomic()
+    def save(self):
+        user = super().save()
+        user.email = self.cleaned_data.get('email')
+        user.first_name = self.cleaned_data.get('first_name')
+        user.last_name = self.cleaned_data.get('last_name')
+        user.save()
+        patient = Patient.objects.create(user=user)
+        patient.save()
+        return user
+
 
 class ApplicationForm(UserCreationForm):
     email = forms.EmailField(max_length=60, help_text='Required. Add a valid email address')
 
     class Meta:
-        model = Doctor
-        fields = ("email","username","first_name","last_name","pers_code","password1","password2")
+        model = DoctorApplication
+        fields = ("email","first_name","last_name","pers_code","password1","password2","sert_nr","spec","free_text")
 
 
-class AccountAuthenticationForm(forms.ModelForm):
+# class RegistrationForm(UserCreationForm):
+#     email = forms.EmailField(max_length=60, help_text='Required. Add a valid email address')
 
-    password = forms.CharField(label="Password", widget=forms.PasswordInput)
+#     class Meta:
+#         model = Patient
+#         fields = ("email","username","first_name","last_name","pers_code","password1","password2")
 
-    class Meta:
-        model = Account
-        fields = ("email", "password")
 
-    def clean(self):
-        if self.is_valid():
-            email = self.cleaned_data["email"]
-            password = self.cleaned_data["password"]
-            if not authenticate(email=email, password=password):
-                raise forms.ValidationError("Invalid login")
+# class AccountAuthenticationForm(forms.ModelForm):
+
+#     password = forms.CharField(label="Password", widget=forms.PasswordInput)
+
+#     class Meta:
+#         model = Patient
+#         fields = ("email", "password")
+
+#     def clean(self):
+#         if self.is_valid():
+#             email = self.cleaned_data["email"]
+#             password = self.cleaned_data["password"]
+#             if not authenticate(email=email, password=password):
+#                 raise forms.ValidationError("Invalid login")
