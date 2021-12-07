@@ -13,6 +13,6 @@ urlpatterns = [
     path('docAppl', docAppl_view, name='docAppl'),
     path('thankYouPage', views.thankYouPage, name='thankYouPage'),
     path('logout', views.logoutUser, name='logout'),
-    path('user', views.User, name='user')
+    path('user', views.user, name='user')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

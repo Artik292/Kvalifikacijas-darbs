@@ -13,6 +13,13 @@
                         Enter Account:
                     </div>
                 </div>
+                {% if form.errors %}
+                <div class="row">
+                    <div class="col d-flex justify-content-center errorMessage">
+                        Email or password is not correct.
+                    </div>
+                </div>
+                {% endif %}
                 <div class="row mt-2">
                     <div class="col">
                         <input type="login" placeholder="Enter login" class="form-control" name='email'>

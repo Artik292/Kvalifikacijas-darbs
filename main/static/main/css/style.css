@@ -275,4 +275,7 @@ li {
   max-width: 100%;
   overflow: hidden; }
 
+.errorMessage {
+  color: red; }
+
 /*# sourceMappingURL=style.css.map */

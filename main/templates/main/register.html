@@ -12,7 +12,7 @@
           <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
             <div class="card-body p-4 p-md-5">
               <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registration Form</h3>
-              <form method="POST">{% csrf_token %}
+              <form method="POST" autocomplete="off">{% csrf_token %}
   
                 <div class="row">
                   <div class="col-md-6 mb-4">
@@ -21,6 +21,10 @@
                       <input type="text" id="firstName" class="form-control form-control-lg" name="first_name" />
                       <label class="form-label" for="firstName">First Name</label>
                     </div>
+
+                    {% if form.first_name.errors %}
+                      <div>{{ form.first_name.errors }}</div>
+                    {% endif %}
   
                   </div>
                   <div class="col-md-6 mb-4">
@@ -60,35 +64,32 @@
                 <div class="row">
 
                   <div class="col-md-6 mb-4 pb-2">
-  
-                    <div class="form-outline">
-                      <input type="text" id="username" class="form-control form-control-lg" autocomplete="off" name="username"/>
-                      <label class="form-label" for="username">Username</label>
-                    </div>
-  
-                  </div>
-                  <div class="col-md-6 mb-4 pb-2">
-  
+                    
                     <div class="form-outline">
                       <input type="password" id="password1" class="form-control form-control-lg" autocomplete="off" name="password1"/>
                       <label class="form-label" for="password">Password</label>
                     </div>
+
+                  </div>
+                  <div class="col-md-6 mb-4 pb-2">
+  
+                    <div class="form-outline">
+                      <input type="password" id="password2" class="form-control form-control-lg" autocomplete="off" name="password2"/>
+                      <label class="form-label" for="password2">Password again</label>
+                    </div>
   
                   </div>
                 </div>
-
-                <div class="row">
-
-                    <div class="col-md-6 pb-2">
-    
-                      <div class="form-outline">
-                        <input type="password" id="password2" class="form-control form-control-lg" autocomplete="off" name="password2"/>
-                        <label class="form-label" for="password2">Password again</label>
-                      </div>
-    
-                    </div>
-                </div>
                 
+                {% if form.errors %}
+                  {% for field in form %}
+                      {% for error in field.errors %}
+                          <div class="alert alert-danger">
+                              <strong>{{ error|escape }}</strong>
+                          </div>
+                      {% endfor %}
+                  {% endfor %}
+                {% endif %}
   
                 <div class="mt-2 pt-2">
                   <input class="btn btn-primary btn-lg" type="submit" value="Submit" />

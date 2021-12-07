@@ -18,6 +18,7 @@ def registration_view(request):
             return redirect('home')
         else:
             context['PatientRegistrationForm'] = form
+            return render(request, 'main/register.html',{'title': 'Registration', 'context' : context, 'form' : form})
     else:
         form = PatientRegistrationForm()
         context['PatientRegistrationForm'] = form

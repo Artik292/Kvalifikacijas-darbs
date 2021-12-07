@@ -2,10 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 from .models import Patient, Doctor, User, DoctorApplication
-# from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate
 # from django.forms import ModelForm
-
-# # from account.models import Patient,Doctor,Admin,DoctorApplication
 
 class PatientRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True)
@@ -20,7 +18,10 @@ class PatientRegistrationForm(UserCreationForm):
         user = super().save()
         user.email = self.cleaned_data.get('email')
         user.first_name = self.cleaned_data.get('first_name')
+        if user.first_name == '':
+            raise ValidationError('lalal')
         user.last_name = self.cleaned_data.get('last_name')
+        user.is_patient = True
         user.save()
         patient = Patient.objects.create(user=user)
         patient.save()
@@ -43,17 +44,17 @@ class ApplicationForm(UserCreationForm):
 #         fields = ("email","username","first_name","last_name","pers_code","password1","password2")
 
 
-# class AccountAuthenticationForm(forms.ModelForm):
+class AccountAuthenticationForm(forms.ModelForm):
 
-#     password = forms.CharField(label="Password", widget=forms.PasswordInput)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput)
 
-#     class Meta:
-#         model = Patient
-#         fields = ("email", "password")
+    class Meta:
+        model = User
+        fields = ("email", "password")
 
-#     def clean(self):
-#         if self.is_valid():
-#             email = self.cleaned_data["email"]
-#             password = self.cleaned_data["password"]
-#             if not authenticate(email=email, password=password):
-#                 raise forms.ValidationError("Invalid login")
+    def clean(self):
+        if self.is_valid():
+            email = self.cleaned_data["email"]
+            password = self.cleaned_data["password"]
+            if not authenticate(email=email, password=password):
+                raise forms.ValidationError("Invalid login")
