@@ -1,0 +1,67 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col headingMain">
+            My analysis
+        </div>
+    </div>
+    <div class="row card mt-2">
+        <table class="table table-hover table-responsive">
+            <thead>
+                <th>Id.</th>
+                <th>File</th>
+                <th>Image</th>
+                <th>Uploaded date</th>
+                <th>Action</th>
+                <th>Status</th>
+            </thead>
+            <tbody>
+            {% for dicom in dicoms%}
+                {% if dicom.user == request.user %}
+                <tr>
+                    <td>
+                        {{ dicom.id }}
+                    </td>
+                    <td>
+                        <a href="{{ dicom.dicom_file.url }}">Download {{ dicom.dicom_file }}</a>
+                    </td>
+                    {% if dicom.file_jpg %}
+                        <td>
+                            <img src="{{ dicom.file_jpg.url }}" alt="no image" class="img-fluid" style="width: 100px;">
+                        </td>
+                    {% else %}
+                        <td>
+                            no image
+                        </td>
+                    {% endif %}
+                    <td>   
+                        {{ dicom.uploaded_date }}
+                    </td>
+                    <td>
+                        <a href="uploadInfo/{{dicom.id}}" class="btn btn-warning">Edit</a>
+                        <a href="{% url 'deleteDicom' dicom.id %}" class="btn btn-danger">Delete</a>
+                    </td>
+                    <td>
+                        Status
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    if($('table tr').length < 2 ){
+        $("table tbody").append("<tr><td colspan='6' style='text-align:center'>No analysis yet</td></tr>");
+    }
+</script>
+
+{% endblock %}

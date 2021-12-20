@@ -5,5 +5,10 @@ from account.models import User
 class UploadDicom(forms.ModelForm):
     class Meta:
         model = Dicom
-        fields = ('dicom_file',)
+        fields = ('dicom_file','textArea')
+    
+    def __init__(self, *args, **kwargs):
+        self.file = kwargs.pop('file', None)
+        super(UploadDicom, self).__init__(*args, **kwargs)
+    
 

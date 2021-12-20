@@ -10,12 +10,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test, per
 from django.http import HttpResponseRedirect
 from account.forms import AccountAuthenticationForm
 from dicom_viewer.models import Dicom
+from dicom_viewer import urls
 
 def checkUserForAuth(request,user):
         if user.is_doctor:
             return redirect('dataBase')
         elif user.is_patient:
-            return redirect('user')
+            return redirect('analysis')
         else:
             return HttpResponseRedirect(reverse('admin:index'))
 
@@ -45,15 +46,6 @@ def index(request):
 
 def thankYouPage(request):
     return render(request, 'main/thankYouPage.html')
-
-def user(request):
-    title = 'Patient page'
-    dicoms = Dicom.objects.all()
-    return render(request, 'main/patient.html', {
-        'title':title,
-        'dicoms':dicoms,
-    })
-
 
 
 def logoutUser(request):

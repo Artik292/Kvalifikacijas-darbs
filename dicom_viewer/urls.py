@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from .views import *
 from django.conf import settings
 from django.conf.urls.static import static
 from account.views import (
@@ -13,7 +14,10 @@ urlpatterns = [
     path('', include('main.urls')),
     path('dataBase', views.dataBase, name='dataBase'),
     path('viewer', views.viewer, name='viewer'),
-    path('upload', views.upload, name='upload'),
+    path('upload', upload, name='upload'),
+    path('uploadInfo/<int:pk>',UploadInfo.as_view(), name='unploadInfo'),
+    path('analysis', views.analysis, name='analysis'),
+    path('deleteDicom/<pk>', deleteDicom, name='deleteDicom')
 ]
 
 

@@ -1,0 +1,99 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+    <div class="container mt-4 card p-3">
+        <div class="row">
+            <div class="col headingMain">Please check all data we found in your DICOM file.</div>
+        </div>
+        <div class="row mt-2">
+            <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                <table class="table table-hover table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Discription</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Uploaded by:
+                            </td>
+                            <td>
+                                {{ dicom.user }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Dicom file:
+                            </td>
+                            <td>
+                                <a href="{{ file.url }}">Download a {{ file }}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ID:
+                            </td>
+                            <td>
+                                {{ dicom.id }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Patient Name:
+                            </td>
+                            <td>
+                                <input type="text" name="patient_name" value="{{ dicom.patient_name }}" class="form-control">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Modality:
+                            </td>
+                            <td>
+                                {{ dicom.modality }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Study date:
+                            </td>
+                            <td>
+                                <input type="date" value="{{ date }}" class="form-control" name="study_date">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Image size:
+                            </td>
+                            <td>
+                                {{ dicom.image_size }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Image:
+                            </td>
+                            <td>
+                                <img src="{{ dicom.file_jpg.url }}" alt="no image" class="img-fluid">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Your info about analysis:
+                            </td>
+                            <td>
+                                <textarea name="textArea" class="form-control" rows="3">{{ dicom.textArea }}</textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-success">Update info</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
