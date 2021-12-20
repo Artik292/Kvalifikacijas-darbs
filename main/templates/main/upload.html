@@ -1,0 +1,13 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+    <h1>upload</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="dicom_file">
+        <button type="submit">Upload</button>
+    </form>
+{% endblock %}

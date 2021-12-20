@@ -62,6 +62,7 @@ class User(AbstractBaseUser):
         return True
 
 class Patient(models.Model):
+    USERNAME_FIELD = 'user'
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key = True)
     phone_number = models.CharField(max_length=20, unique=False)
 

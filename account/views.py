@@ -27,6 +27,7 @@ def registration_view(request):
 
 def docAppl_view(request):
     context = {}
+    title = 'Doc. Applications'
     if request.POST:
         form = ApplicationForm(request.POST)
         if form.is_valid():
@@ -34,8 +35,8 @@ def docAppl_view(request):
             return redirect('thankYouPage')
         else:
             context['ApplicationForm'] = form
-            messages.error(request,'username or password not correct')
+            return render(request, 'main/doctorApplication.html',{'title': title, 'context' : context, 'form' : form})
     else:
         form = ApplicationForm()
         context['ApplicationForm'] = form
-    return render(request, 'main/doctorApplication.html', {'title': 'Doc. Application', 'context' : context}) 
+    return render(request, 'main/doctorApplication.html', {'title': title, 'context' : context}) 

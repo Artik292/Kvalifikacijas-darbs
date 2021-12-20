@@ -1,12 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>FOR PATIENT</h1>
-</body>
-</html>
+{% extends 'main/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col headingMain">
+            Jūsu izmēklējumi
+        </div>
+    </div>
+    <div class="row card mt-2">
+        <table class="table">
+            <thead>
+                <th>Nr.</th>
+                <th>Datne</th>
+            </thead>
+            <tbody>
+                {% for dicom in dicoms%}
+                <tr>
+                  <td>
+                    {{ dicom.dicom_file }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -3,7 +3,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 from .models import Patient, Doctor, User, DoctorApplication
 from django.contrib.auth import authenticate
-# from django.forms import ModelForm
 
 class PatientRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True)
@@ -18,8 +17,6 @@ class PatientRegistrationForm(UserCreationForm):
         user = super().save()
         user.email = self.cleaned_data.get('email')
         user.first_name = self.cleaned_data.get('first_name')
-        if user.first_name == '':
-            raise ValidationError('lalal')
         user.last_name = self.cleaned_data.get('last_name')
         user.is_patient = True
         user.save()

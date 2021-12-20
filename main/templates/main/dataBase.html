@@ -1,5 +1,8 @@
 {% extends 'main/forDoctor.html' %}
 {% load static %}
+{% block title %}
+{{ title }}
+{% endblock %}
 {% block content %}
     <div class="container-fluid mt-4">
       <div class="row px-2">
@@ -161,153 +164,17 @@
                           </tr>
                         </thead>
                         <tbody>
+                          {% for dicom in dicoms %}
+                            <tr>
+                              <td>
+                                {{ dicom.dicom_file }}
+                              </td>
+                            </tr>
+                          {% endfor %}
                           <tr class="tableTR">
                             <td class="name">Mark</td>
                             <td class="surname">Otto</td>
                             <td class="code">#00001</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Emerson</td>
-                            <td class="surname">Beach</td>
-                            <td class="code">#00002</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Cassius</td>
-                            <td class="surname">Mellor</td>
-                            <td class="code">#00003</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Halimah</td>
-                            <td class="surname">Reeves</td>
-                            <td class="code">#00004</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Gina</td>
-                            <td class="surname">Cleveland</td>
-                            <td class="code">#00005</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Adaline</td>
-                            <td class="surname">Mosley</td>
-                            <td class="code">#00006</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Omari</td>
-                            <td class="surname">Holman</td>
-                            <td class="code">#00007</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Mark</td>
-                            <td class="surname">Otto</td>
-                            <td class="code">#00008</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Emerson</td>
-                            <td class="surname">Beach</td>
-                            <td class="code">#00009</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Cassius</td>
-                            <td class="surname">Mellor</td>
-                            <td class="code">#00010</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Halimah</td>
-                            <td class="surname">Reeves</td>
-                            <td class="code">#00011</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Gina</td>
-                            <td class="surname">Cleveland</td>
-                            <td class="code">#00012</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Adaline</td>
-                            <td class="surname">Mosley</td>
-                            <td class="code">#00013</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
-                          </tr>
-                          <tr class="tableTR">
-                            <td class="name">Omari</td>
-                            <td class="surname">Holman</td>
-                            <td class="code">#00014</td>
                             <td>13.06.2020</td>
                             <td class="modality">MR</td>
                             <td class="type">CT</td>

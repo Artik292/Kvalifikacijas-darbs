@@ -9,8 +9,14 @@ from account.views import (
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('', include('main.urls')),
     path('dataBase', views.dataBase, name='dataBase'),
     path('viewer', views.viewer, name='viewer'),
+    path('upload', views.upload, name='upload'),
 ]
+
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
