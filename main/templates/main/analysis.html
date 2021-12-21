@@ -18,7 +18,8 @@
                 <th>File</th>
                 <th>Image</th>
                 <th>Uploaded date</th>
-                <th>Action</th>
+                <th>Edit</th>
+                <th>Delete</th>
                 <th>Status</th>
             </thead>
             <tbody>
@@ -45,6 +46,8 @@
                     </td>
                     <td>
                         <a href="uploadInfo/{{dicom.id}}" class="btn btn-warning">Edit</a>
+                    </td>
+                    <td>
                         <a href="{% url 'deleteDicom' dicom.id %}" class="btn btn-danger">Delete</a>
                     </td>
                     <td>
@@ -60,7 +63,7 @@
 
 <script>
     if($('table tr').length < 2 ){
-        $("table tbody").append("<tr><td colspan='6' style='text-align:center'>No analysis yet</td></tr>");
+        $("table tbody").append("<tr><td colspan='7' style='text-align:center'>No analysis yet</td></tr>");
     }
 </script>
 

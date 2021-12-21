@@ -11,4 +11,8 @@ class UploadDicom(forms.ModelForm):
         self.file = kwargs.pop('file', None)
         super(UploadDicom, self).__init__(*args, **kwargs)
     
+class UpdateDicom(forms.ModelForm):
+    class Meta:
+        model = Dicom
+        fields = ('patient_name','study_date','textArea')
 

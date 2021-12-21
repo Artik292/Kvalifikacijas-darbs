@@ -15,7 +15,7 @@ urlpatterns = [
     path('dataBase', views.dataBase, name='dataBase'),
     path('viewer', views.viewer, name='viewer'),
     path('upload', upload, name='upload'),
-    path('uploadInfo/<int:pk>',UploadInfo.as_view(), name='unploadInfo'),
+    path('uploadInfo/<int:pk>',uploadInfo, name='unploadInfo'),
     path('analysis', views.analysis, name='analysis'),
     path('deleteDicom/<pk>', deleteDicom, name='deleteDicom')
 ]

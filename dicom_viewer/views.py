@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.core.files.storage import FileSystemStorage
-from .forms import UploadDicom
+from .forms import UpdateDicom, UploadDicom
 from .models import Dicom
 from django.core.files import File
 from .settings import MEDIA_ROOT
@@ -34,7 +34,8 @@ def dataBase(request):
 def viewer(request):
     return render(request, 'main/viewer.html')
 
-
+@user_passes_test(lambda u: u.is_patient,login_url='home')
+@login_required(login_url='home')
 def upload(request):
     title = "Upload dicom"
     template = "main/upload.html"
@@ -75,27 +76,37 @@ def from_dcm_to_jpg(dicom,dicom_file,id):
         newid = Dicom.objects.get(id=id)
         newid.delete()
 
+@user_passes_test(lambda u: u.is_patient,login_url='home')
+@login_required(login_url='home')
+def uploadInfo(request, pk):
 
-class UploadInfo(View):
+    dicom = Dicom.objects.get(id = pk)
+    date = dicom.study_date
+    year = date[0:4]
+    month = date[4:6]
+    day = date[6:8]
+    new_date = year + '-' + month + '-' + day
+    template_name = 'main/uploadInfo.html'
+    title = "Upload info about your analysis"
 
-    def get(self,request,pk):
-        dicom = Dicom.objects.get(id = pk)
-        date = dicom.study_date
-        year = date[0:4]
-        month = date[4:6]
-        day = date[6:8]
-        new_date = year + '-' + month + '-' + day
-        template_name = 'main/uploadInfo.html'
-        title = "Upload info about your analysis"
-        return render(request, template_name, {
-            'title': title,
-            'dicom': dicom,
-            'file': dicom.dicom_file,
-            'name':  dicom.user,
-            'date': new_date,
-        })
+    form = UpdateDicom(instance=dicom)
 
+    if request.method == 'POST':
+        form = UpdateDicom(request.POST, instance=dicom)
+        if form.is_valid():
+            form.save()
+            return redirect('analysis')
 
+    return render(request, template_name, {
+        'title': title,
+        'dicom': dicom,
+        'file': dicom.dicom_file,
+        'name':  dicom.user,
+        'date': new_date,
+    })
+
+@user_passes_test(lambda u: u.is_patient,login_url='home')
+@login_required(login_url='home')
 def analysis(request):
     title = 'Patient page'
     template_name = 'main/analysis.html'

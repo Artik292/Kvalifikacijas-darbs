@@ -34,10 +34,12 @@ class Dicom(models.Model):
         self.save()
 
     def delete(self, *args, **kwargs):
-        if self.dicom_file != "":
-            if os.path.isfile(self.dicom_file.path):
-                os.remove(self.dicom_file.path)
-        if self.file_jpg != "":
-            if os.path.isfile(self.file_jpg.path):
-                os.remove(self.file_jpg.path)
-        super(Dicom, self).delete(*args, **kwargs)
+        # if self.dicom_file != "":
+        #     if os.path.isfile(self.dicom_file.path):
+        #         os.remove(self.dicom_file.path)
+        # if self.file_jpg != "":
+        #     if os.path.isfile(self.file_jpg.path):
+        #         os.remove(self.file_jpg.path)
+        self.dicom_file.delete()
+        self.file_jpg.delete()
+        super().delete(*args, **kwargs)
