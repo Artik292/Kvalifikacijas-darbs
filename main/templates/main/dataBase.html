@@ -128,9 +128,6 @@
             <div class="row mt-3">
               <div class="col d-flex justify-content-end">
                 {% csrf_token %}
-                <!-- <input type="file" name="file" accept=".dcm" id="file">
-                <label for="file" class="btn btn-outline-danger mb-0 mr-2">Choose file</label>
-                <button type="submit" class="btn btn-outline-info">Save</button> -->
               </div>
             </div>
           </form>
@@ -152,36 +149,48 @@
                       <table class="table table-bordered m-0">
                         <thead>
                           <tr id="tableHead">
-                            <th scope="col">Name</th>
-                            <th scope="col">Surname</th>
-                            <th scope="col">Code</th>
-                            <th scope="col">Date</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Uploaded by</th>
+                            <th scope="col">Uploaded day</th>
+                            <th scope="col">Patient name</th>
+                            <th scope="col">Analysis date</th>
                             <th scope="col">Modality</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Institution</th>
-                            <th scope="col">Select</th>
                             <th scope="col">Status</th>
+                            <th scope="col">View</td>
                           </tr>
                         </thead>
                         <tbody>
                           {% for dicom in dicoms %}
-                            <tr>
-                              <td>
-                                {{ dicom.dicom_file }}
-                              </td>
-                            </tr>
-                          {% endfor %}
-                          <tr class="tableTR">
-                            <td class="name">Mark</td>
-                            <td class="surname">Otto</td>
-                            <td class="code">#00001</td>
-                            <td>13.06.2020</td>
-                            <td class="modality">MR</td>
-                            <td class="type">CT</td>
-                            <td>Bulduru slimnīca</td>
-                            <td> <input type="checkbox"> </td>
-                            <td> <a  class="btn btn-success">View</a> </td>
+                          <tr>
+                            <td>
+                              {{ dicom.id }}
+                            </td>
+                            <td>
+                              {{ dicom.user }}
+                            </td>
+                            <td>
+                              {{ dicom.uploaded_date }}
+                            </td>
+                            <td>
+                              {{ dicom.patient_name }}
+                            </td>
+                            <td>
+                              {{ dicom.study_date }}
+                            </td>
+                            <td class="modality">
+                              {{ dicom.modality }}
+                            </td>
+                            <td>
+                              Status
+                            </td>
+                            <td>
+                              <a href="{% url 'viewer' slide_id=dicom.id %}" class="btn btn-success">View</a>
+                            </td>
+                            <td class="hide description">
+                              {{ dicom.textArea }}
+                            </td>
                           </tr>
+                          {% endfor %}
                         </tbody>
                       </table>
                     </div>
@@ -211,16 +220,16 @@
                           <thead>
                             <tr>
                               <th scope="col">Modality</th>
-                              <th scope="col">SSK code</th>
-                              <th scope="col">Type</th>
+                              <th scope="col">Patient id</th>
+                              <th scope="col">Sex</th>
                               <th scope="col">CM</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
                               <td id="modality">-</td>
-                              <td id="code">-</td>
-                              <td id="type">-</td>
+                              <td id="patient_id">-</td>
+                              <td id="sex">-</td>
                               <td id="cm">-</td>
                             </tr>
                           </tbody>
@@ -248,7 +257,7 @@
                     </div>
                     <div class="row rowtoggle">
                       <div class="col-12 d-flex align-items-center p-3 m-0">
-                        <p class="text-justify">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        <p class="text-justify" id="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                       </div>
                     </div>
                   </div>
@@ -271,5 +280,5 @@
         </div>
       </div>
     </div>
-    <!-- <script src="{% static 'main/js/database.js' %}"></script> -->
+    <script src="{% static 'main/js/database.js' %}"></script>
 {% endblock %}

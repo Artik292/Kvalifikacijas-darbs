@@ -394,3 +394,21 @@ li {
 .errorMessage{
   color:red;
 }
+
+#analysisTable{
+  th, td{
+    text-align: center;
+  }
+}
+
+.hide{
+  display: none;
+}
+
+.broken{
+  background-color: #e913132b;
+}
+
+.bold{
+  font-weight: bold;
+}

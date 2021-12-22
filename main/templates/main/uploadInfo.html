@@ -63,7 +63,7 @@
                                 Study date:
                             </td>
                             <td>
-                                <input type="date" value="{{ date }}" class="form-control" name="study_date">
+                                <input type="date" value="{{ dicom.study_date }}" class="form-control" name="study_date">
                             </td>
                         </tr>
                         <tr>
@@ -92,6 +92,7 @@
                         </tr>
                     </tbody>
                 </table>
+                <a href="{% url 'analysis' %}" class="btn btn-warning">Go back</a>
                 <button type="submit" class="btn btn-success">Update info</button>
             </form>
         </div>

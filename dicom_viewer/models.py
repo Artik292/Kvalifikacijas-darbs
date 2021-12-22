@@ -3,9 +3,16 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 
+STATUS = (
+    ('None','none'),
+    ('Uploaded','uploaded'),
+    ('Broken', 'broken'),
+)
+
 
 class Dicom(models.Model):
     id = models.AutoField(primary_key=True)
+    status = models.CharField(max_length=20, choices=STATUS, default='none')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     dicom_file = models.FileField(upload_to='dicoms/dcm', null=True)
     file_jpg = models.FileField(upload_to='dicoms/img', null=True)
@@ -18,28 +25,40 @@ class Dicom(models.Model):
     pixel_spacing_x = models.TextField(null=True)
     pixel_spacing_y = models.TextField(null=True)
     slice_location = models.TextField(null=True)
+    sex = models.TextField(null=True)
     textArea = models.TextField(max_length=300,default=" ")
     uploaded_date = models.DateField(auto_now=True)
 
     def save_dcm_data(self, ds=None):
-        self.sop_class = ds.SOPClassUID
-        self.patient_name = ds.PatientName.family_name + " " + ds.PatientName.given_name
-        self.patient_id = ds.PatientID
-        self.modality = ds.Modality
-        self.study_date = ds.StudyDate
-        self.image_size = str(ds.Rows) + "x" + str(ds.Columns)
-        self.pixel_spacing_x = ds.PixelSpacing[0]
-        self.pixel_spacing_y = ds.PixelSpacing[1]
-        self.slice_location = ds.get('SliceLocation', '(missing)')
+        self.patient_id = ds.get('PatientID', 'missing')
+        self.patient_name = ds.get('ds.PatientName.family_name' + ' ' + 'ds.PatientName.given_name', 'missing')
+        self.sex = ds.get('ds.PatientSex', 'missing')
+        self.modality = ds.get('Modality', 'missing')
+
+        date = ds.get('StudyDate', 'missing')
+        print(date)
+        if date != 'missing':
+            year = date[0:4]
+            print(year)
+            month = date[4:6]
+            print(month)
+            day = date[6:8]
+            print(day)
+            new_date = year + '-' + month + '-' + day
+        self.study_date = new_date
+
+        self.image_size = ds.get('str(ds.Rows)' + 'x' + 'str(ds.Columns)', 'missing')
+        self.patient_name = ds.get('PatientName.family_name' + ' ' + 'ds.PatientName.given_name', 'missing') 
+        self.pixel_spacing_x = ds.get('PixelSpacing[0]', 'missing')
+        self.pixel_spacing_y = ds.get('PixelSpacing[1]', 'missing')
+
+        if self.image_size == 'missing' or self.pixel_spacing_x == 'missing' or self.pixel_spacing_y == 'missing':
+            self.status = 'broken'
+        else:
+            self.status = 'uploaded'
         self.save()
 
     def delete(self, *args, **kwargs):
-        # if self.dicom_file != "":
-        #     if os.path.isfile(self.dicom_file.path):
-        #         os.remove(self.dicom_file.path)
-        # if self.file_jpg != "":
-        #     if os.path.isfile(self.file_jpg.path):
-        #         os.remove(self.file_jpg.path)
         self.dicom_file.delete()
         self.file_jpg.delete()
         super().delete(*args, **kwargs)

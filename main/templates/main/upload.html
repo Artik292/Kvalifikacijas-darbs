@@ -8,6 +8,11 @@
         <div class="row">
             <div class="col headingMain">Upload your analysis</div>
         </div>
+        {% if error %}
+        <div class="row">
+            <div class="col errorMessage d-flex justify-content-center"> Your file, file extension or discription of analysis is not valid! </div>
+        </div>
+        {% endif %}
         <div class="row mt-2">
             <form method="post" enctype="multipart/form-data">{% csrf_token %}
                 <div class="row">

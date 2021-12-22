@@ -13,7 +13,7 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', include('main.urls')),
     path('dataBase', views.dataBase, name='dataBase'),
-    path('viewer', views.viewer, name='viewer'),
+    path('viewer/<str:slide_id>/', Viewer.as_view(), name="viewer"),    
     path('upload', upload, name='upload'),
     path('uploadInfo/<int:pk>',uploadInfo, name='unploadInfo'),
     path('analysis', views.analysis, name='analysis'),

@@ -12,46 +12,40 @@
         </div>
     </div>
     <div class="row card mt-2">
-        <table class="table table-hover table-responsive">
+        <table class="table table-hover table-responsive table-bordered mb-0" id="analysisTable">
             <thead>
                 <th>Id.</th>
-                <th>File</th>
-                <th>Image</th>
+                <th>Download file</th>
                 <th>Uploaded date</th>
+                <th>Status</th>
+                <th>View</th>
                 <th>Edit</th>
                 <th>Delete</th>
-                <th>Status</th>
             </thead>
             <tbody>
             {% for dicom in dicoms%}
                 {% if dicom.user == request.user %}
-                <tr>
-                    <td>
+                <tr class="{% if dicom.status == 'broken'%} broken {% endif %}">
+                    <td class="bold">
                         {{ dicom.id }}
                     </td>
                     <td>
                         <a href="{{ dicom.dicom_file.url }}">Download {{ dicom.dicom_file }}</a>
                     </td>
-                    {% if dicom.file_jpg %}
-                        <td>
-                            <img src="{{ dicom.file_jpg.url }}" alt="no image" class="img-fluid" style="width: 100px;">
-                        </td>
-                    {% else %}
-                        <td>
-                            no image
-                        </td>
-                    {% endif %}
                     <td>   
                         {{ dicom.uploaded_date }}
+                    </td>
+                    <td class="bold">
+                        {{ dicom.status }}
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-success">View</a>
                     </td>
                     <td>
                         <a href="uploadInfo/{{dicom.id}}" class="btn btn-warning">Edit</a>
                     </td>
                     <td>
                         <a href="{% url 'deleteDicom' dicom.id %}" class="btn btn-danger">Delete</a>
-                    </td>
-                    <td>
-                        Status
                     </td>
                 </tr>
                 {% endif %}
