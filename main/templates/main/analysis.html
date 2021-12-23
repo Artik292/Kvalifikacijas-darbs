@@ -25,7 +25,7 @@
             <tbody>
             {% for dicom in dicoms%}
                 {% if dicom.user == request.user %}
-                <tr class="{% if dicom.status == 'broken'%} broken {% endif %}">
+                <tr class="{% if dicom.status == 'Broken'%} broken {% endif %}">
                     <td class="bold">
                         {{ dicom.id }}
                     </td>

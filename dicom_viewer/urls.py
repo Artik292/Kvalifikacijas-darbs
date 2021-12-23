@@ -12,12 +12,15 @@ from account.views import (
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', include('main.urls')),
-    path('dataBase', views.dataBase, name='dataBase'),
+    path('dataBase/<str:slide_id>/', DataBase.as_view(), name='dataBase'),
+    path('dataBaseAll',dataBaseAll,name='dataBaseAll'),
     path('viewer/<str:slide_id>/', Viewer.as_view(), name="viewer"),    
     path('upload', upload, name='upload'),
     path('uploadInfo/<int:pk>',uploadInfo, name='unploadInfo'),
     path('analysis', views.analysis, name='analysis'),
-    path('deleteDicom/<pk>', deleteDicom, name='deleteDicom')
+    path('deleteDicom/<pk>', deleteDicom, name='deleteDicom'),
+    path('accept/<int:slide_id>',accept_view, name = 'accept'),
+    path('decline/<int:slide_id>',decline_view,name='decline'),
 ]
 
 

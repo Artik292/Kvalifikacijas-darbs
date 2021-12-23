@@ -14,7 +14,7 @@ from dicom_viewer import urls
 
 def checkUserForAuth(request,user):
         if user.is_doctor:
-            return redirect('dataBase')
+            return redirect('dataBaseAll')
         elif user.is_patient:
             return redirect('analysis')
         else:

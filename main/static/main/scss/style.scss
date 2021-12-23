@@ -412,3 +412,14 @@ li {
 .bold{
   font-weight: bold;
 }
+
+#allAnalysis{
+  text-align: center;
+}
+
+a.disabled{
+  background-color: #b6b6b6!important;
+  border-color: #b6b6b6!important;
+  pointer-events: none;
+  cursor: default;
+}

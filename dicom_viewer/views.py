@@ -1,4 +1,5 @@
 from django.db.models import fields
+from django.forms.widgets import TimeInput
 from django.shortcuts import render, redirect, reverse
 from django.views import View
 from django.urls import reverse_lazy
@@ -26,13 +27,37 @@ from PIL import Image
 
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 @login_required(login_url='home')
-def dataBase(request):
+def dataBaseAll(request):
     title = 'Data Base'
     dicoms = Dicom.objects.all()
     return render(request, 'main/dataBase.html',{
         'dicoms':dicoms,
         'title':title,
     })
+
+
+class DataBase(View):
+    def get(self, request, slide_id="0"):
+        user = request.user
+        template = "main/database.html"
+        title = "Database"
+        dicom = Dicom.objects.all()
+        if user.is_doctor:
+            if slide_id == "":
+                pass
+            else:
+                analysis = Dicom.objects.get(id=slide_id)
+            context = {
+                'dicoms' : dicom,
+                'analysis' : analysis,
+                'title' : title,
+            }
+            return render(request,template,context)
+        else:
+            return redirect('home')
+
+
+
 
 
 # @user_passes_test(lambda u: u.is_doctor,login_url='home')
@@ -70,6 +95,7 @@ class Viewer(View):
             'pixel_spacing_y': pixel_spacing[1],
             'user_name': user_name,
             'data_for_watermark': data_for_watermark,
+            'dicom':dcm,
         }
         return render(request, template, context=context)
 
@@ -169,5 +195,21 @@ def analysis(request):
 
 
 def deleteDicom(request,pk):
-    dicom = Dicom.objects.get(id = pk).delete()
+    Dicom.objects.get(id = pk).delete()
     return redirect('analysis')
+
+
+def accept_view(requeset,slide_id):
+    user = requeset.user
+    dicom = Dicom.objects.get(id=slide_id)
+    dicom.study_doctor = user
+    dicom.save_status()
+    dicom.save()
+    return redirect('dataBaseAll')
+
+def decline_view(request,slide_id):
+    dicom = Dicom.objects.get(id=slide_id)
+    dicom.study_doctor = None
+    dicom.status = 'Uploaded'
+    dicom.save()
+    return redirect('dataBaseAll')
