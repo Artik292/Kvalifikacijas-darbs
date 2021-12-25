@@ -11,6 +11,8 @@
         <link rel="stylesheet" href="{% static 'main/fontawesome/css/all.css' %}">
         <script src="{% static 'main/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{% static 'main/js/summernote-0.8.18-dist/summernote.min.css' %}">
+        <script src="{% static 'main/js/summernote-0.8.18-dist/summernote.min.js'%}"></script>
 
     </head>
     <body id="viewer">
@@ -23,7 +25,7 @@
                 <div class="collapse navbar-collapse" id="navbarText">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item d-flex align-items-center px-2">
-                        <a class="nav-link"><i class="fas fa-database me-2"></i>Database</a>
+                        <a class="nav-link" href="{% url 'dataBaseAll' %}"><i class="fas fa-database me-2"></i>Database</a>
                     </li>
                     <li class="nav-item d-flex align-items-center px-2">
                         <a class="nav-link"><i class="fas fa-desktop me-2"></i>Viewer</a>
@@ -115,9 +117,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col-2">
-                <button type="button" name="button" class="btn btn-primary">Upload</button>
-            </div>
             </div>
 
         </div>
@@ -145,68 +144,25 @@
                         <div class="likeImage mr-2"></div>
                     </div>
                     </div>
-                    <div class="row px-2 mt-4">
-                    <div class="col">
-                        Name Surname, Personal-code
-                    </div>
-                    </div>
-                    <div class="row px-2 mt-1">
-                    <div class="col">
-                        Type, Modality, date | time
-                    </div>
-                    </div>
-                    <div class="row px-3 mt-2">
-                    <div class="col-12 border d-flex p-2">
-                        <div class="likeImage mr-2"></div>
-                        <div class="likeImage mr-2"></div>
-                        <div class="likeImage mr-2"></div>
-                        <div class="likeImage mr-2"></div>
-                        <div class="likeImage mr-2"></div>
-                    </div>
-                    </div>
-                    <div class="row px-3 mt-4">
-                    <div class="col-12 border">
-                        <div class="row">
-                        <div class="col-8 d-flex align-items-center">
-                            <div class="likeImage mr-2"></div>
-                            <div class="likeImage mr-2"></div>
-                            <div class="likeImage mr-2"></div>
-                        </div>
-                        <div class="col-4 border-left">
-                            <div class="row border-bottom">
-                            <div class="col d-flex justify-content-center">
-                                Grid system
-                            </div>
-                            </div>
-                            <div class="row border-bottom">
-                            <div class="col-6 d-flex justify-content-center border-right">
-                                1x1
-                            </div>
-                            <div class="col-6 d-flex justify-content-center">
-                                1x2
-                            </div>
-                            </div>
-                            <div class="row border-bottom">
-                            <div class="col-6 d-flex justify-content-center border-right">
-                                2x2
-                            </div>
-                            <div class="col-6 d-flex justify-content-center">
-                                2x3
-                            </div>
-                            </div>
-                            <div class="row">
-                            <div class="col-6 d-flex justify-content-center border-right">
-                                3x2
-                            </div>
-                            <div class="col-6 d-flex justify-content-center">
-                                3x3
-                            </div>
+                    <form action="">
+                        <div class="row px-3 mt-4">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col">
+                                        Add medical verdict:
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col">
+                                        <textarea id="summernote"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col"><button type="submit" class="btn btn-primary">Submit</button></div>
+                                </div>
                             </div>
                         </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+                    </form>
                 <div class="col-7" id="container">
                 </div>
             </div>
@@ -223,6 +179,9 @@
             var pixel_spacing_x = 1;
             var pixel_spacing_y = 1;
             var data_for_watermark = '{{data_for_watermark}}' + "\n\nSērija:CT, ART 1.25mm\n\nAttēls: 1 / 377\n\nPalielinājums:1.17\n\nW:255 C:127";
+            $(document).ready(function() {
+                $('#summernote').summernote();
+            });
         </script>
         <!-- <script src="https://unpkg.com/konva@7.2.5/konva.min.js"></script>
         <script src="{% static 'js/viewer.js' %} "></script> -->

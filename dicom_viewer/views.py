@@ -25,8 +25,8 @@ import cv2
 import numpy as np
 from PIL import Image
 
-@user_passes_test(lambda u: u.is_doctor,login_url='home')
 @login_required(login_url='home')
+@user_passes_test(lambda u: u.is_doctor,login_url='home')
 def dataBaseAll(request):
     title = 'Data Base'
     dicoms = Dicom.objects.all()
@@ -36,25 +36,22 @@ def dataBaseAll(request):
     })
 
 
-class DataBase(View):
-    def get(self, request, slide_id="0"):
-        user = request.user
-        template = "main/database.html"
-        title = "Database"
-        dicom = Dicom.objects.all()
-        if user.is_doctor:
-            if slide_id == "":
-                pass
-            else:
-                analysis = Dicom.objects.get(id=slide_id)
-            context = {
-                'dicoms' : dicom,
-                'analysis' : analysis,
-                'title' : title,
-            }
-            return render(request,template,context)
-        else:
-            return redirect('home')
+
+
+def dataBase(request,slide_id):
+    template = "main/database.html"
+    title = "Database"
+    strId = int(slide_id)
+    analysis = Dicom.objects.get(id=slide_id)
+    dicom = Dicom.objects.all()
+    
+    context = {
+        'dicoms' : dicom,
+        'analysis' : analysis,
+        'title' : title,
+        'id':strId
+    }
+    return render(request,template,context)
 
 
 
@@ -144,7 +141,7 @@ def from_dcm_to_jpg(dicom,dicom_file,id):
     scaled_image = np.uint8(scaled_image)
     final_image = Image.fromarray(scaled_image)
     image_name = str(id) + ".jpg"
-    redirectUrl = 'uploadInfo/'+str(id)
+    redirectUrl = 'uploadEdit/'+str(id)
     try:
         final_image.save(MEDIA_ROOT+'/dicoms/img/'+image_name)
         dicom.file_jpg.save(str(image_name), File(open(os.path.join(MEDIA_ROOT+'/dicoms/img', str(image_name)), "rb"))) 
@@ -160,11 +157,11 @@ def from_dcm_to_jpg(dicom,dicom_file,id):
 
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 @login_required(login_url='home')
-def uploadInfo(request, pk):
+def uploadEdit(request, pk):
 
     dicom = Dicom.objects.get(id = pk)
     date = dicom.study_date
-    template_name = 'main/uploadInfo.html'
+    template_name = 'main/uploadEdit.html'
     title = "Upload info about your analysis"
 
     form = UpdateDicom(instance=dicom)
@@ -188,9 +185,18 @@ def analysis(request):
     title = 'Patient page'
     template_name = 'main/analysis.html'
     dicoms = Dicom.objects.all().order_by('-id')
-    return render(request, 'main/analysis.html', {
+    return render(request, template_name, {
         'title':title,
         'dicoms':dicoms,
+    })
+
+def uploadView(request,pk):
+    title = 'View your analysis'
+    template_name = 'main/uploadView.html'
+    dicom = Dicom.objects.get(id=pk)
+    return render(request, template_name, {
+        'title':title,
+        'dicom':dicom,
     })
 
 

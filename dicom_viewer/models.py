@@ -18,34 +18,36 @@ STATUS = (
     (Inwork, 'In work')
 )
 
-
-
-
 class Dicom(models.Model):
     id = models.AutoField(primary_key=True)
     status = models.CharField(max_length=20, choices=STATUS)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='Patient')
     dicom_file = models.FileField(upload_to='dicoms/dcm', null=True)
-    file_jpg = models.FileField(upload_to='dicoms/img', null=True)
-    sop_class = models.TextField(null=True)
-    patient_name = models.TextField(null=True)
-    patient_id = models.TextField(null=True)
-    modality = models.TextField(null=True)
-    study_date = models.TextField(null=True)
-    image_size = models.TextField(null=True)
-    pixel_spacing_x = models.TextField(null=True)
-    pixel_spacing_y = models.TextField(null=True)
-    slice_location = models.TextField(null=True)
-    sex = models.TextField(null=True)
+    file_jpg = models.FileField(upload_to='dicoms/img', null=True, blank=True)
+    sop_class = models.TextField(null=True, blank=True)
+    patient_name = models.TextField(null=True, blank=True)
+    patient_id = models.TextField(null=True, blank=True)
+    modality = models.TextField(null=True, blank=True)
+    study_date = models.TextField(null=True, blank=True)
+    image_size = models.TextField(null=True, blank=True)
+    pixel_spacing_x = models.TextField(null=True, blank=True)
+    pixel_spacing_y = models.TextField(null=True, blank=True)
+    slice_location = models.TextField(null=True, blank=True)
+    sex = models.TextField(null=True, blank=True)
+    age = models.TextField(null=True,blank=True)
+    type = models.TextField(null=True, blank=True)
     textArea = models.TextField(max_length=300,default=" ")
-    uploaded_date = models.DateField(auto_now=True)
+    uploaded_date = models.DateField(auto_now=True, blank=True)
     study_doctor = models.ForeignKey(User,on_delete=models.CASCADE,related_name='Doctor',null=True,blank=True)
 
     def save_dcm_data(self, ds=None):
+        print(ds)
         self.patient_id = ds.get('PatientID', 'missing')
-        self.patient_name = ds.get('PatientName.family_name' + ' ' + 'PatientName.given_name', 'missing')
+        self.patient_name = ds.get('PatientName', 'missing')
         self.sex = ds.get('PatientSex', 'missing')
         self.modality = ds.get('Modality', 'missing')
+        self.type = ds.get('TransmitCoilName ','missing')
+        self.age = ds.get('PatientAge','missing')
 
         date = ds.get('StudyDate', 'missing')
         if date != 'missing':

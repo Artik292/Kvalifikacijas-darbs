@@ -141,7 +141,7 @@
                   </div>
                   <div class="row" id="tableDatabase">
                     <div class="col-12 p-0 table-responsive">
-                      <table class="table table-bordered m-0" id="allAnalysis">
+                      <table class="table table-bordered m-0" id="MyAnalysis">
                         <thead>
                           <tr id="tableHead">
                             <th scope="col">ID</th>
@@ -158,7 +158,11 @@
                         <tbody>
                           {% for dicom in dicoms %}
                             {% if dicom.status != 'Broken' and dicom.study_doctor == user %}
-                              <tr data-href="{% url 'dataBase' slide_id=dicom.id %}">
+                            {% if dicom.id == id %}
+                              <tr data-href="{% url 'dataBase' slide_id=dicom.id %}#{{dicom.id}}" class=" choosen " id="{{ dicom.id }}">
+                            {% else %}
+                              <tr data-href="{% url 'dataBase' slide_id=dicom.id %}#{{dicom.id}}"  id="{{ dicom.id }}">
+                            {% endif %}
                                 <td>
                                   {{ dicom.id }}
                                 </td>
@@ -221,7 +225,11 @@
                         <tbody>
                           {% for dicom in dicoms %}
                             {% if dicom.status != 'Broken' %}
-                              <tr data-href="{% url 'dataBase' slide_id=dicom.id %}">
+                              {% if dicom.id == id %}
+                                <tr data-href="{% url 'dataBase' slide_id=dicom.id %}#{{dicom.id}}" class=" choosen " id="{{ dicom.id }}">
+                              {% else %}
+                                <tr data-href="{% url 'dataBase' slide_id=dicom.id %}#{{dicom.id}}"  id="{{ dicom.id }}">
+                              {% endif %}
                                 <td>
                                   {{ dicom.id }}
                                 </td>

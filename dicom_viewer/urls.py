@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from . import views
 from .views import *
 from django.conf import settings
@@ -12,11 +12,12 @@ from account.views import (
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', include('main.urls')),
-    path('dataBase/<str:slide_id>/', DataBase.as_view(), name='dataBase'),
+    path('dataBase/<int:slide_id>/', dataBase, name='dataBase'),
     path('dataBaseAll',dataBaseAll,name='dataBaseAll'),
     path('viewer/<str:slide_id>/', Viewer.as_view(), name="viewer"),    
     path('upload', upload, name='upload'),
-    path('uploadInfo/<int:pk>',uploadInfo, name='unploadInfo'),
+    path('uploadEdit/<int:pk>',uploadEdit, name='unploadInfo'),
+    path('uploadView/<int:pk>',uploadView, name='unploadView'),
     path('analysis', views.analysis, name='analysis'),
     path('deleteDicom/<pk>', deleteDicom, name='deleteDicom'),
     path('accept/<int:slide_id>',accept_view, name = 'accept'),

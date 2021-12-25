@@ -304,4 +304,7 @@ a.disabled {
   pointer-events: none;
   cursor: default; }
 
+.choosen {
+  background-color: #bfbfbf; }
+
 /*# sourceMappingURL=style.css.map */

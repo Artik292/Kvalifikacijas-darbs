@@ -7,4 +7,7 @@ $(document).ready(function(){
             return false;
         }
     });
+    if($('#myAnalysis tr').length < 2 ){
+        $("table tbody").append("<tr><td colspan='7' style='text-align:center'>No analysis yet</td></tr>");
+    }
   });
