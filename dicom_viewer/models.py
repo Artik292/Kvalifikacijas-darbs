@@ -41,42 +41,44 @@ class Dicom(models.Model):
     study_doctor = models.ForeignKey(User,on_delete=models.CASCADE,related_name='Doctor',null=True,blank=True)
 
     def save_dcm_data(self, ds=None):
-        print(ds)
-        self.patient_id = ds.get('PatientID', 'missing')
-        self.patient_name = ds.get('PatientName', 'missing')
-        self.sex = ds.get('PatientSex', 'missing')
-        self.modality = ds.get('Modality', 'missing')
-        self.type = ds.get('TransmitCoilName ','missing')
-        self.age = ds.get('PatientAge','missing')
+        try:
+            self.patient_id = ds.get('PatientID', 'missing')
+            self.patient_name = ds.get('PatientName', 'missing')
+            self.sex = ds.get('PatientSex', 'missing')
+            self.modality = ds.get('Modality', 'missing')
+            self.type = ds.get('TransmitCoilName ','missing')
+            self.age = ds.get('PatientAge','missing')
 
-        date = ds.get('StudyDate', 'missing')
-        if date != 'missing':
-            year = date[0:4]
-            month = date[4:6]
-            day = date[6:8]
-            new_date = year + '-' + month + '-' + day
-        self.study_date = new_date
+            date = ds.get('StudyDate', 'missing')
+            if date != 'missing':
+                year = date[0:4]
+                month = date[4:6]
+                day = date[6:8]
+                new_date = year + '-' + month + '-' + day
+            self.study_date = new_date
 
-        rows = ds.get('Rows','missing')
-        columns =  ds.get('Columns','missing')
-        if rows!='missing' and columns!='missing':
-            imageSize = str(rows) + 'x' + str(columns)
-        else:
-            imageSize = 'missing'
+            rows = ds.get('Rows','missing')
+            columns =  ds.get('Columns','missing')
+            if rows!='missing' and columns!='missing':
+                imageSize = str(rows) + 'x' + str(columns)
+            else:
+                imageSize = 'missing'
 
-        self.image_size = imageSize
+            self.image_size = imageSize
 
-        self.patient_name = ds.get('PatientName.family_name' + ' ' + 'PatientName.given_name', 'missing') 
-        
-        self.pixel_spacing_x = ds.get('PixelSpacing[0]', '(missing)')
-        self.pixel_spacing_y = ds.get('PixelSpacing[1]', '(missing)')
+            self.patient_name = ds.get('PatientName.family_name' + ' ' + 'PatientName.given_name', 'missing') 
+            
+            self.pixel_spacing_x = ds.get('PixelSpacing[0]', '(missing)')
+            self.pixel_spacing_y = ds.get('PixelSpacing[1]', '(missing)')
 
 
-        if self.image_size == 'missing' or self.pixel_spacing_x == 'missing' or self.pixel_spacing_y == 'missing':
-            self.status = 'Broken'
-        else:
-            self.status = 'Uploaded'
-        self.save()
+            if self.image_size == 'missing' or self.pixel_spacing_x == 'missing' or self.pixel_spacing_y == 'missing':
+                self.status = 'Broken'
+            else:
+                self.status = 'Uploaded'
+            self.save()
+        except:
+            pass            
 
     def delete(self, *args, **kwargs):
         self.dicom_file.delete()

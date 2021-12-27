@@ -100,27 +100,34 @@ class Viewer(View):
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 @login_required(login_url='home')
 def upload(request):
+    error = False
     title = "Upload dicom"
     template = "main/upload.html"
-    error = False
     context = {
         'title':title,
     }
     if request.method == 'POST':
+        dicom_file = request.FILES.get("dicom_file", None)
+        file_name = dicom_file.name
+        file_extension = pathlib.Path(file_name).suffix
         form = UploadDicom(request.POST, request.FILES)
         if form.is_valid():
-            dicom_file = request.FILES.get("dicom_file", None)
-            file_name = dicom_file.name
-            file_extension = pathlib.Path(file_name).suffix
-
-            ds = pydicom.dcmread(dicom_file)
-
             if file_extension == '.dcm' or file_extension == '.DCM':
                 note = form.save(commit=False)
                 note.user = request.user
                 note.uploaded_date = date.today()
                 form.save()
-                return from_dcm_to_jpg(note,note.dicom_file,note.id)
+                error = from_dcm_to_jpg(note,note.dicom_file,note.id,error)
+                if error:
+                    return render(request, template,{
+                        'title' : title,
+                        'form' : form,
+                        'error' : error
+                    })
+                else:
+                    redirectUrl = 'uploadEdit/'+str(note.id)
+                    print(redirectUrl)
+                    return redirect(redirectUrl)
             else:
                 error = True
         else:
@@ -134,26 +141,29 @@ def upload(request):
         'error' : error
     })
 
-def from_dcm_to_jpg(dicom,dicom_file,id):    
+def from_dcm_to_jpg(dicom,dicom_file,id,error):    
     ds = pydicom.dcmread(os.path.join(dicom_file.path))
-    new_image = ds.pixel_array.astype(float)
+    new_image = ds.pixel_array
     scaled_image = (np.maximum(new_image, 0) / new_image.max()) * 255.0
     scaled_image = np.uint8(scaled_image)
-    final_image = Image.fromarray(scaled_image)
-    image_name = str(id) + ".jpg"
-    redirectUrl = 'uploadEdit/'+str(id)
+    if scaled_image.ndim > 2:
+        error = True
+        return error
     try:
+        final_image = Image.fromarray(scaled_image)
+        image_name = str(id) + ".jpg"
         final_image.save(MEDIA_ROOT+'/dicoms/img/'+image_name)
         dicom.file_jpg.save(str(image_name), File(open(os.path.join(MEDIA_ROOT+'/dicoms/img', str(image_name)), "rb"))) 
         dicom.save_dcm_data(ds=ds)
         newid = Dicom.objects.get(id=id)
         newid.save()
-        return redirect(redirectUrl)
+        error = False
+        return error
     except:
         newid = Dicom.objects.get(id=id)
         newid.delete()
         error = True
-        return redirect('upload'), error
+        return error
 
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 @login_required(login_url='home')

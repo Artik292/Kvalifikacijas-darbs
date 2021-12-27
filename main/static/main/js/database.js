@@ -7,7 +7,10 @@ $(document).ready(function(){
             return false;
         }
     });
-    if($('#myAnalysis tr').length < 2 ){
-        $("table tbody").append("<tr><td colspan='7' style='text-align:center'>No analysis yet</td></tr>");
+    if($('#MyAnalysis tr').length < 2 ){
+        $("#MyAnalysis tbody").append("<tr><td colspan='9' style='text-align:center'>No analysis yet</td></tr>");
+    }
+    if($('#tableDatabase tr').length < 2 ){
+        $("#tableDatabase tbody").append("<tr><td colspan='9' style='text-align:center'>No analysis yet</td></tr>");
     }
   });
