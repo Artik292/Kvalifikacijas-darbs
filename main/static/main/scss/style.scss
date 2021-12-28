@@ -413,7 +413,7 @@ li {
   font-weight: bold;
 }
 
-#allAnalysis{
+#MyAnalysis, #allAnalysis{
   text-align: center;
 }
 
@@ -426,4 +426,26 @@ a.disabled{
 
 .choosen{
   background-color: #bfbfbf;
+}
+
+.page-link{
+  color: black!important;
+}
+
+
+.disabledPag{
+  background-color: #dfdfdf;
+  pointer-events: none;
+  cursor: default;
+}
+
+.errorBox{
+  background-color: red;
+  color: white;
+  border-radius: 10px;
+  padding: auto;
+}
+
+.checked{
+  background-color: #00800024;
 }

@@ -124,12 +124,6 @@
               </div>
             </div>
           </div>
-          <form method="post">
-            <div class="row mt-3">
-              <div class="col d-flex justify-content-end">
-              </div>
-            </div>
-          </form>
           <div class="row">
             <div class="col mt-3" id="database">
               <div class="row">
@@ -138,6 +132,11 @@
                     <div class="col d-flex align-items-center">
                       My analysises:
                     </div>
+                    {% if doctor.accepted_analysis_count == 5 %}
+                    <div class="col errorBox me-3">
+                      You have reached your maximum amount of analysises (5)! 
+                    </div>
+                    {% endif %}
                   </div>
                   <div class="row" id="tableDatabase">
                     <div class="col-12 p-0 table-responsive">
@@ -159,9 +158,9 @@
                           {% for dicom in dicoms %}
                             {% if dicom.status != 'Broken' and dicom.study_doctor == user %}
                             {% if dicom.id == id %}
-                              <tr data-href="{% url 'dataBase' slide_id=dicom.id %}#{{dicom.id}}" class=" choosen " id="{{ dicom.id }}">
+                              <tr data-href="{% url 'dataBase' slide_id=dicom.id %}" class="choosen">
                             {% else %}
-                              <tr data-href="{% url 'dataBase' slide_id=dicom.id %}#{{dicom.id}}"  id="{{ dicom.id }}">
+                              <tr data-href="{% url 'dataBase' slide_id=dicom.id %}">
                             {% endif %}
                                 <td>
                                   {{ dicom.id }}
@@ -188,7 +187,11 @@
                                   <a href="{% url 'viewer' slide_id=dicom.id %}" class="btn btn-success">View</a>
                                 </td>
                                 <td>
+                                  {% if dicom.status == 'Checked' %}
+                                  <a class="btn btn-danger disabled">Decline</a>
+                                  {% else %}
                                   <a href="{% url 'decline' slide_id=dicom.id %}" class="btn btn-danger">Decline</a>
+                                  {% endif %}
                                 </td>
                               </tr>
                             {% endif %}
@@ -223,7 +226,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for dicom in dicoms %}
+                          {% for dicom in page.object_list %}
                             {% if dicom.status != 'Broken' %}
                               {% if dicom.id == id %}
                                 <tr data-href="{% url 'dataBase' slide_id=dicom.id %}#{{dicom.id}}" class=" choosen " id="{{ dicom.id }}">
@@ -255,7 +258,11 @@
                                   <a href="{% url 'viewer' slide_id=dicom.id %}" class="btn btn-success">View</a>
                                 </td>
                                 <td>
-                                  <a href="{% url 'accept' slide_id=dicom.id %}" class="btn btn-warning {% if dicom.status == 'In work' %} disabled {% endif %}">Accept</a>
+                                  {% if dicom.status == 'In work' or dicom.status == 'Checked' or doctor.accepted_analysis_count == 5 %}
+                                  <a class="btn btn-warning disabled">Accept</a>
+                                  {% else %}
+                                  <a href="{% url 'accept' slide_id=dicom.id %}" class="btn btn-warning">Accept</a>
+                                  {% endif %}
                                 </td>
                               </tr>
                             {% endif %}
@@ -266,6 +273,34 @@
                   </div>
                 </div>
               </div>
+              {% if is_pag %}
+              <div class=" my-3 row">
+                <div class="col d-flex justify-content-center">
+                  <ul class="pagination">
+                    <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                        <a class="page-link" href="{{prev_url}}">Previous</a>
+                    </li>
+                    {% for n in page.paginator.page_range %}
+                    {% if n == page.number %}
+                    <li class="page-item bold" aria-current="page">
+                        <a class="page-link" href="?page={{n}}">{{n}}
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    {% elif n > page.number|add:-3 and n < page.number|add:3 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{n}}">{{n}}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    <li class="page-item {% if not next_url %} disabled {% endif %}">
+                        <a class="page-link" href="{{next_url}}">Next</a>
+                    </li>
+                </ul>
+                </div>
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>

@@ -9,13 +9,16 @@ sNone = 'None'
 Uploaded = 'Uploaded'
 Broken = 'Broken'
 Inwork = 'In work'
-
+Checked = 'Checked'
+Finished = 'Finished'
 
 STATUS = (
     (sNone,'None'),
     (Uploaded,'Uploaded'),
     (Broken, 'Broken'),
-    (Inwork, 'In work')
+    (Inwork, 'In work'),
+    (Checked, 'Checked'),
+    (Finished, 'Finished'),
 )
 
 class Dicom(models.Model):
@@ -39,11 +42,14 @@ class Dicom(models.Model):
     textArea = models.TextField(max_length=300,default=" ")
     uploaded_date = models.DateField(auto_now=True, blank=True)
     study_doctor = models.ForeignKey(User,on_delete=models.CASCADE,related_name='Doctor',null=True,blank=True)
+    medical_verdict = models.TextField(null=True, blank=True)
 
     def save_dcm_data(self, ds=None):
         try:
             self.patient_id = ds.get('PatientID', 'missing')
-            self.patient_name = ds.get('PatientName', 'missing')
+            name = ds.get('PatientName', 'missing')
+            name = str(name)
+            self.patient_name = name.replace("^"," ")
             self.sex = ds.get('PatientSex', 'missing')
             self.modality = ds.get('Modality', 'missing')
             self.type = ds.get('TransmitCoilName ','missing')
@@ -65,14 +71,12 @@ class Dicom(models.Model):
                 imageSize = 'missing'
 
             self.image_size = imageSize
+            pixel_spacing = ds.get('PixelSpacing','missing')
+            if pixel_spacing != 'missing':
+                self.pixel_spacing_x = pixel_spacing[0]
+                self.pixel_spacing_y = pixel_spacing[1]
 
-            self.patient_name = ds.get('PatientName.family_name' + ' ' + 'PatientName.given_name', 'missing') 
-            
-            self.pixel_spacing_x = ds.get('PixelSpacing[0]', '(missing)')
-            self.pixel_spacing_y = ds.get('PixelSpacing[1]', '(missing)')
-
-
-            if self.image_size == 'missing' or self.pixel_spacing_x == 'missing' or self.pixel_spacing_y == 'missing':
+            if self.image_size == 'missing':
                 self.status = 'Broken'
             else:
                 self.status = 'Uploaded'

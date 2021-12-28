@@ -16,3 +16,7 @@ class UpdateDicom(forms.ModelForm):
         model = Dicom
         fields = ('patient_name','study_date','textArea')
 
+class AddMedicalVerdict(forms.ModelForm):
+    class Meta:
+        model = Dicom
+        fields = ('medical_verdict',)

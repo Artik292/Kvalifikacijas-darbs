@@ -242,8 +242,7 @@ $(document).ready(function() {
       var complexText = new Konva.Text({
         x: 10,
         y: 10,
-        text:
-          "Jānis Berziņš, 102093-12122, 2021/06-03\n\nSērija:CT, ART 1.25mm\n\nAttēls: 1 / 377\n\nPalielinājums:1.17\n\nW:255 C:127",
+        text: data_for_watermark,
         fontSize: 15,
         fontFamily: 'Calibri',
         fill: '#fff',

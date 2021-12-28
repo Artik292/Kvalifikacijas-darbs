@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, AbstractUser
 from django.shortcuts import reverse
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class myAccountManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, pers_code, password=None):
@@ -71,6 +72,13 @@ class Doctor(models.Model):
     sert_nr = models.CharField(unique=True, max_length=11)
     spec = models.CharField(unique=True, max_length=30)
     free_text = models.TextField(blank=True)
+    accepted_analysis_count = models.IntegerField(
+        default=0,
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(0)
+        ]
+    )
 
         
 class DoctorApplication(AbstractBaseUser):
