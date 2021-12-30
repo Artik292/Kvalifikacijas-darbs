@@ -78,7 +78,6 @@
                 </table>
                 <div class="row">
                     <div class="col">
-                        <a href="{% url 'analysis' %}" class="btn btn-warning">Go back</a>
                         {% if dicom.status == 'Checked' %}
                         <a href class="btn btn-danger">Decline</a>
                         <a href="{% url 'finish' dicom.id %}" class="btn btn-success">Approve and finish</a>

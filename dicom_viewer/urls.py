@@ -22,7 +22,8 @@ urlpatterns = [
     path('deleteDicom/<pk>', deleteDicom, name='deleteDicom'),
     path('accept/<int:slide_id>',accept_view, name = 'accept'),
     path('decline/<int:slide_id>',decline_view,name='decline'),
-    path('finish/<int:slide_id>',finish,name='finish')
+    path('finish/<int:slide_id>',finish,name='finish'),
+    path('archive',archive,name='archive'),
 ]
 
 

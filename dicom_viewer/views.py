@@ -240,6 +240,9 @@ def from_dcm_to_jpg(dicom,dicom_file,id,error):
 def uploadEdit(request, pk):
 
     dicom = Dicom.objects.get(id = pk)
+    if dicom.status == 'Finished':
+        return redirect('archive')
+
     template_name = 'main/uploadEdit.html'
     title = "Upload info about your analysis"
 
@@ -297,9 +300,11 @@ def uploadView(request,pk):
     title = 'View your analysis'
     template_name = 'main/uploadView.html'
     dicom = Dicom.objects.get(id=pk)
+    link = request.META.get('HTTP_REFERER')
     return render(request, template_name, {
         'title':title,
         'dicom':dicom,
+        'link':link,
     })
 
 @login_required(login_url='home')
@@ -347,9 +352,44 @@ def decline_view(request,slide_id):
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def finish(request,slide_id):
     dicom = Dicom.objects.get(id=slide_id)
+    if dicom.status == 'Finished':
+        return redirect('archive')
     doctor = Doctor.objects.get(user=dicom.study_doctor)
     doctor.accepted_analysis_count -= 1
     dicom.status = 'Finished'
     dicom.save()
     doctor.save()
     return redirect('analysis')
+
+@login_required(login_url='home')
+@user_passes_test(lambda u: u.is_patient,login_url='home')
+def archive(request):
+    template_name = 'main/archive.html'
+    title = 'Archive'
+    dicoms = Dicom.objects.filter(status='Finished')
+
+    # PAGINATOR SETTING
+    paginator = Paginator(dicoms, 10)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+
+    is_pag = page.has_other_pages()
+
+    if page.has_next():
+        next_url = '?page={}'.format(page.next_page_number())
+    else:
+        next_url = ''
+
+    if page.has_previous():
+        prev_url = '?page={}'.format(page.previous_page_number())
+    else:
+        prev_url = ''
+
+    return render(request,template_name,{
+        'title':title,
+        'dicoms':dicoms,
+        'page': page,
+        'is_pag': is_pag,
+        'next_url': next_url,
+        'prev_url': prev_url,
+    })
