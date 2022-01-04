@@ -324,4 +324,14 @@ a.disabled {
 .checked {
   background-color: #00800024; }
 
+.boxCard {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 10px; }
+  .boxCard input {
+    color: #686666; }
+
+.bb {
+  border-bottom: 1px solid #dfdfdf; }
+
 /*# sourceMappingURL=style.css.map */

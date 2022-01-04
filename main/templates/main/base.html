@@ -49,8 +49,8 @@
               {% endif %}
             </ul>
             {% if request.user.is_authenticated %}
-            <span class="navbar-text px-2">
-                Hello, {{request.user}} 
+            <span class="navbar-text">
+              <a href="{% url 'userInfo' %}">Hello, {{request.user}} </a>
             </span>
             {% endif %}
           </div>

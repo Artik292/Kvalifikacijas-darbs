@@ -79,7 +79,7 @@
                 <div class="row">
                     <div class="col">
                         {% if dicom.status == 'Checked' %}
-                        <a href class="btn btn-danger">Decline</a>
+                        <a href="{% url 'declineVerdict' dicom.id %}" class="btn btn-danger">Decline</a>
                         <a href="{% url 'finish' dicom.id %}" class="btn btn-success">Approve and finish</a>
                         {% endif%}
                     </div>

@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin,messages
 from django.contrib.auth.models import Group
 from account.models import User, Patient, Doctor, DoctorApplication
 
@@ -10,6 +10,9 @@ class DoctorApplicationAdmin(admin.ModelAdmin):
     def Approve(self,request,queryset):
         user = queryset.first()
         for user in queryset:
+            if User.objects.filter(email=user.email).exists or User.objects.filter(pers_code=user.pers_code).exists():
+                self.message_user(request, "User with this email or personal code already exists", level=messages.ERROR)
+                return
             newUser = User.objects.create(first_name=user.first_name,last_name=user.last_name,pers_code=user.pers_code,email=user.email,password=user.password,is_doctor=user.is_doctor)
             newUser.save()
             newDoctor = Doctor.objects.create(user=newUser,sert_nr=user.sert_nr,free_text=user.free_text,spec=user.spec)

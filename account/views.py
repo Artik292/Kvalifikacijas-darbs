@@ -1,9 +1,11 @@
+from django.core.files.base import ContentFile
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, authenticate
-from account.forms import PatientRegistrationForm, ApplicationForm
+from account.forms import PatientRegistrationForm, ApplicationForm,UpdatePatientInfo
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.conf import settings
+from account.models import User, Doctor, Patient
 
 def registration_view(request):
     context = {}
@@ -40,3 +42,41 @@ def docAppl_view(request):
         form = ApplicationForm()
         context['ApplicationForm'] = form
     return render(request, 'main/doctorApplication.html', {'title': title, 'context' : context}) 
+
+def userInfo(request):
+    user = request.user
+    title = 'Information about user'
+    blockLoad = 'main/base.html'
+    template = 'main/userInfo.html'
+    role = 'patient'
+    userInfo = ''
+
+    if user.is_doctor:
+        role = 'doctor'
+        userInfo = Doctor.objects.get(user=user)
+        blockLoad = 'main/forDoctor.html'
+    
+    context = {}
+
+    if request.POST:
+        form = UpdatePatientInfo(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+        else:
+            return render(request,template,context = {
+                'role':role,
+                'userInfo':userInfo,
+                'title':title,
+                'blockLoad':blockLoad,
+                'form':form,
+            })
+    else:
+        form = UpdatePatientInfo()
+        context['UpdatePatientInfo'] = form    
+    
+    return render(request,template,context = {
+        'role':role,
+        'userInfo':userInfo,
+        'title':title,
+        'blockLoad':blockLoad,
+    })

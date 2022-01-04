@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect
 from account.forms import AccountAuthenticationForm
 from dicom_viewer.models import Dicom
 from dicom_viewer import urls
+from account.models import User, Doctor, Patient
 
 def checkUserForAuth(request,user):
         if user.is_doctor:
@@ -51,3 +52,4 @@ def thankYouPage(request):
 def logoutUser(request):
     logout(request)
     return redirect('home')
+

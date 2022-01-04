@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, AbstractUser
 from django.shortcuts import reverse
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator,RegexValidator
 
 class myAccountManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, pers_code, password=None):
@@ -46,7 +46,7 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     first_name = models.CharField(max_length=100, unique=False)
     last_name = models.CharField(max_length=100, unique=False)
-    pers_code = models.CharField(primary_key=True,max_length=11, unique=True)
+    pers_code = models.CharField(primary_key=True,max_length=11, validators=[RegexValidator(regex='^.{11}$', message='Length has to be 11.', code='nomatch')], unique=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name','last_name','pers_code']
@@ -65,7 +65,6 @@ class User(AbstractBaseUser):
 class Patient(models.Model):
     USERNAME_FIELD = 'user'
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key = True)
-    phone_number = models.CharField(max_length=20, unique=False)
 
 class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key = True)

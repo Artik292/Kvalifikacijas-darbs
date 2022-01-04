@@ -25,9 +25,6 @@
               <li class="nav-item d-flex align-items-center px-2">
                 <a class="nav-link" href="{% url 'dataBaseAll' %}"><i class="fas fa-database me-2"></i>Database</a>
               </li>
-              <li class="nav-item d-flex align-items-center px-2">
-                <a class="nav-link" ><i class="fas fa-desktop me-2"></i>Viewer</a>
-              </li>
               {% if request.user.is_authenticated %}
               <li class="nav-item d-flex align-items-center px-2">
                 <a class="nav-link"  href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i></i>Log out</a>
@@ -43,7 +40,7 @@
             </ul>
             {% if request.user.is_authenticated %}
             <span class="navbar-text">
-                Hello, {{request.user}} 
+              <a href="{% url 'userInfo' %}">Hello, {{request.user}} </a>
             </span>
             {% endif %}
           </div>

@@ -31,14 +31,16 @@ class ApplicationForm(UserCreationForm):
     class Meta:
         model = DoctorApplication
         fields = ("email","first_name","last_name","pers_code","password1","password2","sert_nr","spec","free_text")
-
-
-# class RegistrationForm(UserCreationForm):
-#     email = forms.EmailField(max_length=60, help_text='Required. Add a valid email address')
-
-#     class Meta:
-#         model = Patient
-#         fields = ("email","username","first_name","last_name","pers_code","password1","password2")
+    
+    def clean(self):
+        cd = self.cleaned_data
+        email = cd.get('email')
+        pers_code = cd.get('pers_code')
+        if User.objects.filter(email=email).exists():
+            self.add_error('email', "User with this Email already exists.")
+        if User.objects.filter(pers_code=pers_code).exists():
+            self.add_error('pers_code', "User with this Pers code already exists.")
+        return cd
 
 
 class AccountAuthenticationForm(forms.ModelForm):
@@ -55,3 +57,9 @@ class AccountAuthenticationForm(forms.ModelForm):
             password = self.cleaned_data["password"]
             if not authenticate(email=email, password=password):
                 raise forms.ValidationError("Invalid login")
+
+
+class UpdatePatientInfo(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("email","first_name","last_name","pers_code")

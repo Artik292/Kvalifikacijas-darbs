@@ -28,10 +28,10 @@ class Dicom(models.Model):
     dicom_file = models.FileField(upload_to='dicoms/dcm', null=True)
     file_jpg = models.FileField(upload_to='dicoms/img', null=True, blank=True)
     sop_class = models.TextField(null=True, blank=True)
-    patient_name = models.TextField(null=True, blank=True)
+    patient_name = models.TextField(null=True)
     patient_id = models.TextField(null=True, blank=True)
     modality = models.TextField(null=True, blank=True)
-    study_date = models.TextField(null=True, blank=True)
+    study_date = models.TextField(null=True)
     image_size = models.TextField(null=True, blank=True)
     pixel_spacing_x = models.TextField(null=True, blank=True)
     pixel_spacing_y = models.TextField(null=True, blank=True)
@@ -42,7 +42,7 @@ class Dicom(models.Model):
     textArea = models.TextField(max_length=300,default=" ")
     uploaded_date = models.DateField(auto_now=True, blank=True)
     study_doctor = models.ForeignKey(User,on_delete=models.CASCADE,related_name='Doctor',null=True,blank=True)
-    medical_verdict = models.TextField(null=True, blank=True)
+    medical_verdict = models.TextField(null=True)
 
     def save_dcm_data(self, ds=None):
         try:

@@ -61,8 +61,6 @@ def dataBaseAll(request):
     })
 
 
-
-
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def dataBase(request,slide_id):
@@ -104,36 +102,25 @@ def dataBase(request,slide_id):
     return render(request,template,context)
 
 
-class Viewer(View):
-    def get(self, request, slide_id="0"):
-        if slide_id == "":
-            image = '../../../static/images/xray.jpg'
-            pixel_spacing = [1, 1]
-            user_name = "Fedotovs Konstantins, 120278 - 21322"
-            data_for_watermark = "Fedotovs Konstantins, 120278 - 21322"
-        else:
-            dcm = Dicom.objects.get(id=slide_id)
-            image = dcm.file_jpg.url
-            pixel_spacing = [dcm.pixel_spacing_x, dcm.pixel_spacing_y]
-            user_name = dcm.patient_name
-            # "Jānis Berziņš, 102093-12122, 2021/06-03\n\nSērija:CT, ART 1.25mm\n\nAttēls: 1 / 377\n\nPalielinājums:1.17\n\nW:255 C:127",
-
-        template = "main/viewer.html"
-        context = {
-            'image': image,
-            'pixel_spacing_x': dcm.pixel_spacing_x,
-            'pixel_spacing_y': dcm.pixel_spacing_y,
-            'user_name': user_name,
-            'dicom':dcm,
-        }
-        return render(request, template, context=context)
-
-
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def viewer(request,slide_id):
 
     dicom = Dicom.objects.get(id = slide_id)
+    user = request.user
+    canEdit = False
+    checked = False
+    template = "main/viewer.html"
+    image = dicom .file_jpg.url
+    pixel_spacing = [dicom.pixel_spacing_x, dicom.pixel_spacing_y]
+    user_name = dicom.patient_name
+    # "Jānis Berziņš, 102093-12122, 2021/06-03\n\nSērija:CT, ART 1.25mm\n\nAttēls: 1 / 377\n\nPalielinājums:1.17\n\nW:255 C:127",
+
+    if dicom.study_doctor == user:
+        canEdit = True
+
+    if dicom.status == 'Checked':
+        checked = True
 
     if request.method == 'POST':
         form = AddMedicalVerdict(request.POST, instance=dicom)
@@ -141,25 +128,26 @@ def viewer(request,slide_id):
             dicom.status = 'Checked'
             form.save()
             return redirect('dataBaseAll')
+        else:
+            return render(request,template,context = {
+                'image': image,
+                'pixel_spacing_x': dicom.pixel_spacing_x,
+                'pixel_spacing_y': dicom.pixel_spacing_y,
+                'user_name': user_name,
+                'dicom':dicom,
+                'checked':checked,
+                'canEdit':canEdit,
+                'form':form,
+            })
 
-    if slide_id == "":
-        image = '../../../static/images/xray.jpg'
-        pixel_spacing = [1, 1]
-        user_name = "Fedotovs Konstantins, 120278 - 21322"
-        data_for_watermark = "Fedotovs Konstantins, 120278 - 21322"
-    else:
-        image = dicom .file_jpg.url
-        pixel_spacing = [dicom.pixel_spacing_x, dicom.pixel_spacing_y]
-        user_name = dicom.patient_name
-        # "Jānis Berziņš, 102093-12122, 2021/06-03\n\nSērija:CT, ART 1.25mm\n\nAttēls: 1 / 377\n\nPalielinājums:1.17\n\nW:255 C:127",
-
-    template = "main/viewer.html"
     context = {
         'image': image,
         'pixel_spacing_x': dicom.pixel_spacing_x,
         'pixel_spacing_y': dicom.pixel_spacing_y,
         'user_name': user_name,
         'dicom':dicom,
+        'checked':checked,
+        'canEdit':canEdit,
     }
     return render(request, template, context=context)   
 
@@ -174,11 +162,11 @@ def upload(request):
         'title':title,
     }
     if request.method == 'POST':
-        dicom_file = request.FILES.get("dicom_file", None)
-        file_name = dicom_file.name
-        file_extension = pathlib.Path(file_name).suffix
         form = UploadDicom(request.POST, request.FILES)
         if form.is_valid():
+            dicom_file = request.FILES.get("dicom_file", None)
+            file_name = dicom_file.name
+            file_extension = pathlib.Path(file_name).suffix
             if file_extension == '.dcm' or file_extension == '.DCM':
                 note = form.save(commit=False)
                 note.user = request.user
@@ -238,6 +226,7 @@ def from_dcm_to_jpg(dicom,dicom_file,id,error):
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 @login_required(login_url='home')
 def uploadEdit(request, pk):
+    context = {}
 
     dicom = Dicom.objects.get(id = pk)
     if dicom.status == 'Finished':
@@ -253,12 +242,23 @@ def uploadEdit(request, pk):
         if form.is_valid():
             form.save()
             return redirect('analysis')
+        else:
+            context['UpdateDicom'] = form
+            return render(request, template_name, {
+                'title': title,
+                'dicom': dicom,
+                'file': dicom.dicom_file,
+                'name':  dicom.user,
+                'context': context,
+                'form':form,
+            })
 
     return render(request, template_name, {
         'title': title,
         'dicom': dicom,
         'file': dicom.dicom_file,
         'name':  dicom.user,
+        'context': context,
     })
 
 @login_required(login_url='home')
@@ -351,14 +351,16 @@ def decline_view(request,slide_id):
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def finish(request,slide_id):
+    user = request.user
     dicom = Dicom.objects.get(id=slide_id)
-    if dicom.status == 'Finished':
-        return redirect('archive')
-    doctor = Doctor.objects.get(user=dicom.study_doctor)
-    doctor.accepted_analysis_count -= 1
-    dicom.status = 'Finished'
-    dicom.save()
-    doctor.save()
+    if dicom.user == user:
+        if dicom.status == 'Finished':
+            return redirect('archive')
+        doctor = Doctor.objects.get(user=dicom.study_doctor)
+        doctor.accepted_analysis_count -= 1
+        dicom.status = 'Finished'
+        dicom.save()
+        doctor.save()
     return redirect('analysis')
 
 @login_required(login_url='home')
@@ -393,3 +395,18 @@ def archive(request):
         'next_url': next_url,
         'prev_url': prev_url,
     })
+
+@login_required(login_url='home')
+@user_passes_test(lambda u: u.is_patient,login_url='home')
+def declineVerdict(request,slide_id):
+    user = request.user
+    dicom = Dicom.objects.get(id = slide_id)
+    doctor = Doctor.objects.get(user = dicom.study_doctor)
+    if dicom.user == user:
+        dicom.study_doctor = None
+        dicom.status = 'Uploaded'
+        dicom.medical_verdict = None
+        doctor.accepted_analysis_count -= 1
+        dicom.save()
+        doctor.save()
+    return redirect('analysis')
