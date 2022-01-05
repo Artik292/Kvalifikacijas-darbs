@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, AbstractUser
 from django.shortcuts import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator,RegexValidator
+from django.contrib import messages
+from django.contrib.auth.models import PermissionsMixin
 
 class myAccountManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, pers_code, password=None):
@@ -37,19 +39,22 @@ class myAccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=254, unique=True)
     is_doctor = models.BooleanField(default=False)
     is_patient = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
     first_name = models.CharField(max_length=100, unique=False)
     last_name = models.CharField(max_length=100, unique=False)
     pers_code = models.CharField(primary_key=True,max_length=11, validators=[RegexValidator(regex='^.{11}$', message='Length has to be 11.', code='nomatch')], unique=True)
 
+    objects = myAccountManager()
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name','last_name','pers_code']
+
 
     objects = myAccountManager()
 
@@ -78,7 +83,6 @@ class Doctor(models.Model):
             MinValueValidator(0)
         ]
     )
-
         
 class DoctorApplication(AbstractBaseUser):
     email = models.EmailField(verbose_name="email",max_length=60, unique=True)

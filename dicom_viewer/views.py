@@ -152,8 +152,8 @@ def viewer(request,slide_id):
     return render(request, template, context=context)   
 
 
-@user_passes_test(lambda u: u.is_patient,login_url='home')
 @login_required(login_url='home')
+@user_passes_test(lambda u: u.is_patient,login_url='home')
 def upload(request):
     error = False
     title = "Upload dicom"

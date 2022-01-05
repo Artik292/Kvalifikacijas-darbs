@@ -12,18 +12,53 @@ class PatientRegistrationForm(UserCreationForm):
         model = User
         fields = ("email","first_name","last_name","pers_code","password1","password2")
 
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        return password2
+
     @transaction.atomic()
-    def save(self):
-        user = super().save()
-        user.email = self.cleaned_data.get('email')
-        user.first_name = self.cleaned_data.get('first_name')
-        user.last_name = self.cleaned_data.get('last_name')
+    def save(self, commit=True):
+        user = super(UserCreationForm, self).save(commit=False)
         user.is_patient = True
-        user.save()
-        patient = Patient.objects.create(user=user)
-        patient.save()
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            patient = Patient.objects.create(user=user)
+            patient.save()
+            user.save()
         return user
 
+class UserRegistrationForm(UserCreationForm):
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ("email","first_name","last_name","pers_code","password1","password2")
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        return password2
+
+    @transaction.atomic()
+    def save(self, commit=True):
+        user = super(UserCreationForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if user.is_patient:
+            patient = Patient.objects.create(user=user)
+            patient.save()
+        if user.is_doctor:
+            doctor = Doctor.objects.create(user=user)
+            doctor.save()
+        if commit:
+            user.save()
+        return user
+    
 
 class ApplicationForm(UserCreationForm):
     email = forms.EmailField(max_length=60, help_text='Required. Add a valid email address')
