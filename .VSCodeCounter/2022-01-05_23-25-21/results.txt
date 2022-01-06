@@ -1,0 +1,55 @@
+Date : 2022-01-05 23:25:21
+Directory : /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account
+Total : 26 files,  640 codes, 18 comments, 180 blanks, all 838 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |         25 |        636 |         18 |        180 |        834 |
+| HTML     |          1 |          4 |          0 |          0 |          4 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                   | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                      |         26 |        640 |         18 |        180 |        838 |
+| migrations                                                                                                                             |         18 |        298 |         17 |        104 |        419 |
+| templates                                                                                                                              |          1 |          4 |          0 |          0 |          4 |
+| templates/admin                                                                                                                        |          1 |          4 |          0 |          0 |          4 |
+| templates/admin/account                                                                                                                |          1 |          4 |          0 |          0 |          4 |
++----------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                                                               | language | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/__init__.py                                                                    | Python   |          0 |          0 |          1 |          1 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/admin.py                                                                       | Python   |         85 |          0 |         18 |        103 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/apps.py                                                                        | Python   |          3 |          0 |          3 |          6 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/forms.py                                                                       | Python   |         81 |          0 |         19 |        100 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0001_initial.py                                                     | Python   |         65 |          1 |          7 |         73 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0002_doctor_limited_integer_field.py                                | Python   |         13 |          1 |          6 |         20 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0003_rename_limited_integer_field_doctor_accepted_analysis_count.py | Python   |         12 |          1 |          6 |         19 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0004_alter_doctor_accepted_analysis_count.py                        | Python   |         13 |          1 |          6 |         20 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0005_alter_doctor_accepted_analysis_count.py                        | Python   |         13 |          1 |          6 |         20 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0006_alter_user_pers_code.py                                        | Python   |         13 |          1 |          6 |         20 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0007_alter_user_pers_code.py                                        | Python   |         13 |          1 |          6 |         20 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0008_alter_user_pers_code.py                                        | Python   |         13 |          1 |          6 |         20 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0009_alter_user_pers_code.py                                        | Python   |         13 |          1 |          6 |         20 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0010_remove_patient_phone_number.py                                 | Python   |         11 |          1 |          6 |         18 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0011_remove_user_is_superuser.py                                    | Python   |         11 |          1 |          6 |         18 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0012_alter_user_unique_together.py                                  | Python   |         11 |          1 |          6 |         18 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0013_auto_20220104_2306.py                                          | Python   |         17 |          1 |          6 |         24 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0014_auto_20220104_2309.py                                          | Python   |         18 |          1 |          6 |         25 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0015_auto_20220104_2313.py                                          | Python   |         18 |          1 |          6 |         25 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0016_auto_20220104_2347.py                                          | Python   |         23 |          1 |          6 |         30 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/0017_auto_20220105_2254.py                                          | Python   |         21 |          1 |          6 |         28 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/migrations/__init__.py                                                         | Python   |          0 |          0 |          1 |          1 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/models.py                                                                      | Python   |         94 |          0 |         25 |        119 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/templates/admin/account/accountChangeDoctor.html                               | HTML     |          4 |          0 |          0 |          4 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/tests.py                                                                       | Python   |          1 |          1 |          2 |          4 |
+| /Users/erikcvetkov/Desktop/Kvalifikacijas-darbs/account/views.py                                                                       | Python   |         74 |          0 |          8 |         82 |
+| Total                                                                                                                                  |          |        640 |         18 |        180 |        838 |
++----------------------------------------------------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

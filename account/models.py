@@ -5,6 +5,13 @@ from django.core.validators import MaxValueValidator, MinValueValidator,RegexVal
 from django.contrib import messages
 from django.contrib.auth.models import PermissionsMixin
 
+YES_NO = (
+
+    ('yes','yes'),
+    ('no','no'),
+    ('cannot_say','cannot say'),
+)
+
 class myAccountManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, pers_code, password=None):
         if not email:
@@ -70,11 +77,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Patient(models.Model):
     USERNAME_FIELD = 'user'
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key = True)
+    regions = models.CharField(max_length=100,blank=False)
+    uses_medicaments = models.CharField(max_length=10,choices=YES_NO,default='no')
+    medicaments = models.TextField(blank=True)
+    uses_alcohol = models.CharField(max_length=10,choices=YES_NO,default='no')
+    is_smoking = models.CharField(max_length=10,choices=YES_NO,default='no')
+    are_chronic_diseases = models.CharField(max_length=10,choices=YES_NO,default='no')
+    chronic_diseases = models.TextField(blank=True)
+
 
 class Doctor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key = True)
-    sert_nr = models.CharField(unique=True, max_length=11)
-    spec = models.CharField(unique=True, max_length=30)
+    user = models.OneToOneField(User, primary_key = True, on_delete = models.CASCADE)
+    sert_nr = models.CharField(unique=True, max_length=11,null=True)
+    spec = models.CharField(max_length=30)
     free_text = models.TextField(blank=True)
     accepted_analysis_count = models.IntegerField(
         default=0,
@@ -86,7 +101,6 @@ class Doctor(models.Model):
         
 class DoctorApplication(AbstractBaseUser):
     email = models.EmailField(verbose_name="email",max_length=60, unique=True)
-    date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -96,7 +110,7 @@ class DoctorApplication(AbstractBaseUser):
     last_name = models.CharField(max_length=100, unique=False)
     pers_code = models.CharField(primary_key=True,max_length=11, unique=True)
     sert_nr = models.CharField(unique=True, max_length=11)
-    spec = models.CharField(unique=True, max_length=30)
+    spec = models.CharField(max_length=30)
     free_text = models.TextField(blank=True)
 
     USERNAME_FIELD = 'email'

@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
+from django.db.models.enums import Choices
+from django.forms import widgets
 from .models import Patient, Doctor, User, DoctorApplication
 from django.contrib.auth import authenticate
 
@@ -29,6 +31,18 @@ class PatientRegistrationForm(UserCreationForm):
             patient.save()
             user.save()
         return user
+
+class PatientInfoForm(forms.ModelForm):
+    class Meta:
+        model = Patient
+        fields = ("regions","uses_medicaments","uses_alcohol","is_smoking","are_chronic_diseases","chronic_diseases","medicaments")
+
+        widgets = {
+            'uses_medicaments' : forms.Select(attrs={'class':'form-select form-select-lg select'}),
+            'uses_alcohol' : forms.Select(attrs={'class':'form-select form-select-lg'}),
+            'is_smoking' : forms.Select(attrs={'class':'form-select form-select-lg'}),
+            'are_chronic_diseases' : forms.Select(attrs={'class':'form-select form-select-lg select'}),
+        }
 
 class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True)

@@ -107,6 +107,7 @@ def dataBase(request,slide_id):
 def viewer(request,slide_id):
 
     dicom = Dicom.objects.get(id = slide_id)
+    patient = Patient.objects.get(user=dicom.user)
     user = request.user
     canEdit = False
     checked = False
@@ -138,6 +139,7 @@ def viewer(request,slide_id):
                 'checked':checked,
                 'canEdit':canEdit,
                 'form':form,
+                'patient':patient,
             })
 
     context = {
@@ -148,6 +150,7 @@ def viewer(request,slide_id):
         'dicom':dicom,
         'checked':checked,
         'canEdit':canEdit,
+        'patient':patient,
     }
     return render(request, template, context=context)   
 

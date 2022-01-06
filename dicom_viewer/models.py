@@ -24,10 +24,9 @@ STATUS = (
 class Dicom(models.Model):
     id = models.AutoField(primary_key=True)
     status = models.CharField(max_length=20, choices=STATUS)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='Patient')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='Patient',on_delete=models.CASCADE)
     dicom_file = models.FileField(upload_to='dicoms/dcm', null=True)
     file_jpg = models.FileField(upload_to='dicoms/img', null=True, blank=True)
-    sop_class = models.TextField(null=True, blank=True)
     patient_name = models.TextField(null=True)
     patient_id = models.TextField(null=True, blank=True)
     modality = models.TextField(null=True, blank=True)
@@ -35,13 +34,11 @@ class Dicom(models.Model):
     image_size = models.TextField(null=True, blank=True)
     pixel_spacing_x = models.TextField(null=True, blank=True)
     pixel_spacing_y = models.TextField(null=True, blank=True)
-    slice_location = models.TextField(null=True, blank=True)
     sex = models.TextField(null=True, blank=True)
     age = models.TextField(null=True,blank=True)
-    type = models.TextField(null=True, blank=True)
     textArea = models.TextField(max_length=300,default=" ")
     uploaded_date = models.DateField(auto_now=True, blank=True)
-    study_doctor = models.ForeignKey(User,on_delete=models.CASCADE,related_name='Doctor',null=True,blank=True)
+    study_doctor = models.ForeignKey(User,related_name='Doctor',null=True,blank=True,on_delete=models.SET_NULL)
     medical_verdict = models.TextField(null=True)
 
     def save_dcm_data(self, ds=None):

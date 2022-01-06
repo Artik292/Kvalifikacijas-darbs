@@ -124,17 +124,61 @@
                         </div>
                     </div>
                     {% if canEdit %}
+                    <div class="row px-3 mt-4">
+                        <div class="col bold">
+                            Information about patient
+                        </div>
+                    </div>
+                    <div class="row px-3 mt-2">
+                        <div class="col">
+                            Region: {{patient.regions}}
+                        </div>
+                    </div>
+                    <div class="row px-3 mt-2">
+                        <div class="col">
+                            Patient uses medicaments: {{patient.uses_medicaments}}
+                        </div>
+                    </div>
+                    {% if patient.uses_medicaments == "yes" and patient.medicaments != '' %}
+                    <div class="row px-3 mt-2">
+                        <div class="col">
+                            Medicaments: {{patient.medicaments}}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row px-3 mt-2">
+                        <div class="col">
+                            Patient drinks alcohol: {{patient.uses_alcohol}}
+                        </div>
+                    </div>
+                    <div class="row px-3 mt-2">
+                        <div class="col">
+                            Patient is smoking: {{patient.is_smoking}}
+                        </div>
+                    </div>
+                    <div class="row px-3 mt-2">
+                        <div class="col">
+                            Patient has chronic diseases: {{patient.are_chronic_diseases}}
+                        </div>
+                    </div>
+                    {% if patient.are_chronic_diseases == "yes" and patient.chronic_diseases != '' %}
+                    <div class="row px-3 mt-2">
+                        <div class="col">
+                            Medicaments: {{patient.chronic_diseases}}
+                        </div>
+                    </div>
+                    {% endif %}
                     <form method="post">{% csrf_token %}
                         <div class="row px-3 mt-4">
                             <div class="col-12">
                                 <div class="row">
-                                    <div class="col">
+                                    <div class="col bold">
                                         Add medical verdict:
                                     </div>
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col">
-                                        <textarea class="form-control" rows="3" name="medical_verdict"> 
+                                        <textarea class="form-control" rows="10" name="medical_verdict"> 
                                             {% if dicom.medical_verdict %}
                                                 {{dicom.medical_verdict}}
                                             {% endif %}

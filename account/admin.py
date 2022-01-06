@@ -1,6 +1,7 @@
 from django.contrib import admin,messages
 from django.contrib.auth.models import Group
 from account.models import User, Patient, Doctor, DoctorApplication
+from dicom_viewer.models import Dicom
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
@@ -26,8 +27,26 @@ class DoctorApplicationAdmin(admin.ModelAdmin):
 class PatientAdmin(admin.ModelAdmin):
     list_display = ('user',)
 
+    def delete_queryset(self, request, queryset):
+        patient = queryset.first()
+        for patient in queryset:
+            User.objects.get(patient=patient).delete()
+        queryset.delete()
+
 class DoctorAdmin(admin.ModelAdmin):
     list_display = ('user',)
+    readonly_fields = ['accepted_analysis_count']
+
+    def delete_queryset(self, request, queryset):
+        doctor = queryset.first()
+        for doctor in queryset:
+            user = User.objects.get(doctor=doctor)
+            user.delete()
+            if Dicom.objects.filter(study_doctor=user).exists():
+                dicom = Dicom.objects.get(study_doctor=user)
+                dicom.medical_verdict = ''
+                dicom.status = 'Uploaded'
+        queryset.delete()
 
 
 class UserChangeForm(forms.ModelForm):
@@ -68,9 +87,30 @@ class UserAdmin(BaseUserAdmin):
             messages.error(request, "User cannot have multiple roles at the same time")
             return
         else:
-            if obj.is_admin or obj.is_staff:
+            if obj.is_admin or obj.is_staff or obj.is_superuser:
                 obj.is_patient = False
                 obj.is_doctor = False
+                obj.is_admin = True
+                obj.is_staff = True
+                obj.is_superuser = True
+                if Doctor.objects.filter(user=obj).exists():
+                    Doctor.objects.filter(user=obj).delete()
+                if Patient.objects.filter(user=obj).exists():
+                    Patient.objects.filter(user=obj).delete()
+            else: 
+                if obj.is_patient:
+                    if not Patient.objects.filter(user=obj).exists():
+                        Patient.objects.create(user=obj).save()
+                    if Doctor.objects.filter(user=obj).exists():
+                        messages.warning(request, 'Now this user ir patient. All data in doctors accaount was deleted')
+                        Doctor.objects.filter(user=obj).delete()
+                if obj.is_doctor: 
+                    if not Doctor.objects.filter(user=obj).exists():
+                        messages.warning(request, 'You created new user, but users doctor info is empty')
+                        Doctor.objects.create(user=obj).save()
+                    if Patient.objects.filter(user=obj).exists():
+                        Patient.objects.filter(user=obj).delete()
+
             obj.save()
         
 

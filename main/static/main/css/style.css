@@ -133,7 +133,8 @@ tbody tr:hover {
   flex: 0 1 auto; }
 
 .flex11 {
-  flex: 1 1 auto; }
+  flex: 1 1 auto;
+  overflow: scroll; }
 
 html {
   height: 100%;

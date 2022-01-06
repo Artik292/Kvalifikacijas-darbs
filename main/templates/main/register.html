@@ -11,99 +11,158 @@
         <div class="col-12 col-lg-9 col-xl-7">
           <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
             <div class="card-body p-4 p-md-5">
-              <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registration Form</h3>
+              <h3 class="pb-2 pb-md-0">Patient registration form</h3>
               <form method="POST" autocomplete="off">{% csrf_token %}
+                  <div class="row">
+                    <div class="col-md-6 mb-4">
+    
+                      <div class="form-outline">
+                        <input type="text" id="firstName" class="form-control form-control-lg" name="first_name" />
+                        <label class="form-label" for="firstName">First Name</label>
+                      </div>
   
-                <div class="row">
-                  <div class="col-md-6 mb-4">
-  
-                    <div class="form-outline">
-                      <input type="text" id="firstName" class="form-control form-control-lg" name="first_name" />
-                      <label class="form-label" for="firstName">First Name</label>
+                      {% if form.first_name.errors %}
+                        <div>{{ form.first_name.errors }}</div>
+                      {% endif %}
+    
                     </div>
-
-                    {% if form.first_name.errors %}
-                      <div>{{ form.first_name.errors }}</div>
-                    {% endif %}
+                    <div class="col-md-6 mb-4">
+    
+                      <div class="form-outline">
+                        <input type="text" id="lastName" class="form-control form-control-lg" name="last_name"/>
+                        <label class="form-label" for="lastName">Last Name</label>
+                      </div>
   
-                  </div>
-                  <div class="col-md-6 mb-4">
-  
-                    <div class="form-outline">
-                      <input type="text" id="lastName" class="form-control form-control-lg" name="last_name"/>
-                      <label class="form-label" for="lastName">Last Name</label>
+                      {% if form.last_name.errors %}
+                        <div>{{ form.last_name.errors }}</div>
+                      {% endif %}
+    
                     </div>
-
-                    {% if form.last_name.errors %}
-                      <div>{{ form.last_name.errors }}</div>
-                    {% endif %}
-  
                   </div>
-                </div>
+    
+                  <div class="row">
+                    <div class="col-md-6 mb-4">
+    
+                      <div class="form-outline">
+                        <input
+                          type="number"
+                          class="form-control form-control-lg"
+                          id="perscode"
+                          name="pers_code"
+                        />
+                        <label for="birthdayDate" class="form-label">Personal Code (only numbers)</label>
+                      </div>
   
-                <div class="row">
-                  <div class="col-md-6 mb-4">
+                      {% if form.pers_code.errors %}
+                        <div>{{ form.pers_code.errors }}</div>
+                      {% endif %}
   
-                    <div class="form-outline">
-                      <input
-                        type="number"
-                        class="form-control form-control-lg"
-                        id="perscode"
-                        name="pers_code"
-                      />
-                      <label for="birthdayDate" class="form-label">Personal Code (only numbers)</label>
                     </div>
-
-                    {% if form.pers_code.errors %}
-                      <div>{{ form.pers_code.errors }}</div>
-                    {% endif %}
-
-                  </div>
-                  <div class="col-md-6 mb-4 ">
+                    <div class="col-md-6 mb-4 ">
+    
+                      <div class="form-outline">
+                        <input type="email" id="emailAddress" class="form-control form-control-lg" name="email"/>
+                        <label class="form-label" for="emailAddress">Email</label>
+                      </div>
   
-                    <div class="form-outline">
-                      <input type="email" id="emailAddress" class="form-control form-control-lg" name="email"/>
-                      <label class="form-label" for="emailAddress">Email</label>
+                      {% if form.email.errors %}
+                        <div>{{ form.email.errors }}</div>
+                      {% endif %}
+    
                     </div>
-
-                    {% if form.email.errors %}
-                      <div>{{ form.email.errors }}</div>
-                    {% endif %}
-  
                   </div>
-                </div>
+    
+                  <div class="row bb">
   
-                <div class="row">
-
-                  <div class="col-md-6 mb-4 pb-2">
-                    
-                    <div class="form-outline">
-                      <input type="password" id="password1" class="form-control form-control-lg" autocomplete="off" name="password1"/>
-                      <label class="form-label" for="password">Password</label>
+                    <div class="col-md-6 mb-2 pb-2">
+                      
+                      <div class="form-outline">
+                        <input type="password" id="password1" class="form-control form-control-lg" autocomplete="off" name="password1"/>
+                        <label class="form-label" for="password">Password</label>
+                      </div>
+                      {% if form.password1.errors %}
+                        <div>{{ form.password1.errors }}</div>
+                      {% endif %}
+  
                     </div>
-                    {% if form.password1.errors %}
-                      <div>{{ form.password1.errors }}</div>
-                    {% endif %}
-
-                  </div>
-                  <div class="col-md-6 mb-4 pb-2">
+                    <div class="col-md-6 mb-2 pb-2">
+    
+                      <div class="form-outline">
+                        <input type="password" id="password2" class="form-control form-control-lg" autocomplete="off" name="password2"/>
+                        <label class="form-label" for="password2">Password again</label>
+                      </div>
   
-                    <div class="form-outline">
-                      <input type="password" id="password2" class="form-control form-control-lg" autocomplete="off" name="password2"/>
-                      <label class="form-label" for="password2">Password again</label>
+                      {% if form.password2.errors %}
+                        <div>{{ form.password2.errors }}</div>
+                      {% endif %}
+    
                     </div>
-
-                    {% if form.password2.errors %}
-                      <div>{{ form.password2.errors }}</div>
-                    {% endif %}
-  
                   </div>
-                </div>
+                  <h3 class="pb-2 pb-md-0 mt-4">Info about patient</h3>
+                  <div class="row mt-2">
+
+                    <div class="col-md-12 mb-4 pb-2">
+                      
+                      <div class="form-outline">
+                        <input type="text" id="region" class="form-control form-control-lg" autocomplete="off" name="regions"/>
+                        <label class="form-label" for="region">Enter your region</label>
+                      </div>
   
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-4">
+                      <div class="form-outline">
+                        {{ form2.uses_medicaments }}
+                        <label for="uses_medicaments" class="form-label">Do you use medicaments?</label>
+                      </div>
+
+  
+                    </div>
+                    <div class="col-md-6 mb-4 ">
+    
+                      <div class="form-outline">
+                        <input type="text" id="medicaments" class="form-control form-control-lg enter" name="medicaments" disabled/>
+                        <label class="form-label" for="emailAddress">Medicaments</label>
+                      </div>
+  
+                      {% if form2.medicaments.errors %}
+                        <div>{{ form.medicaments.errors }}</div>
+                      {% endif %}
+    
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-4">
+                      <div class="form-outline">
+                        {{ form2.uses_alcohol }}
+                        <label for="uses_alcohol" class="form-label">Do you drink alcohol?</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                      <div class="form-outline">
+                        {{ form2.is_smoking }}
+                        <label for="is_smoking" class="form-label">Do you smoke?</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-4">
+                      <div class="form-outline">
+                        {{ form2.are_chronic_diseases }}
+                        <label for="are_chronic_diseases" class="form-label">Do you chronic diseases?</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                      <div class="form-outline">
+                        <input type="text" name="chronic_diseases" id="chronic_diseases" class="form-control form-control-lg enter" disabled>
+                        <label for="chronic_diseases" class="form-label">Chronic diseases</label>
+                      </div>
+                    </div>
+                  </div>
                 <div class="mt-2 pt-2">
                   <input class="btn btn-primary btn-lg" type="submit" value="Submit" />
                 </div>
-  
               </form>
             </div>
           </div>
@@ -111,5 +170,18 @@
       </div>
     </div>
   </section>
+
+  <script>
+    $('.select').change(function(){
+      var row = $(this).parent().parent().parent()
+      var enter = $(row).find('.enter');
+      var value = $(this).find(":selected").text()
+      if (value == 'yes'){
+        $(enter).removeAttr('disabled');
+      } else {
+        $(enter).attr('disabled','disabled');
+      }
+    })
+  </script>
 
 {% endblock %}
