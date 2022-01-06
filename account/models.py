@@ -62,9 +62,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name','last_name','pers_code']
 
-
-    objects = myAccountManager()
-
     def _str_(self):
         return self.email
 
@@ -101,10 +98,6 @@ class Doctor(models.Model):
         
 class DoctorApplication(AbstractBaseUser):
     email = models.EmailField(verbose_name="email",max_length=60, unique=True)
-    last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
-    is_admin = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
     is_doctor = models.BooleanField(default=True)
     first_name = models.CharField(max_length=100, unique=False)
     last_name = models.CharField(max_length=100, unique=False)
