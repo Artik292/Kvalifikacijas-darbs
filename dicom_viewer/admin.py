@@ -4,8 +4,8 @@ from account.models import User, Patient, Doctor, DoctorApplication
 
 
 class DicomAdmin(admin.ModelAdmin):
-    list_display = ('id','user')
-    readonly_fields=('study_doctor','user')
+    list_display = ('id','user','uploaded_date','file_jpg')
+    readonly_fields=('study_doctor','user',)
 
     def delete_queryset(self, request, queryset):
 

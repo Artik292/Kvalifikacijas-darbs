@@ -6,131 +6,14 @@
 {% block content %}
     <div class="container-fluid mt-4">
       <div class="row px-2">
-        <div class="col-8 pe-4">
+        <div class="col-8 pe-4">                
           <div class="row">
-            <div class="col">
-              <div class="row bg-white p-3 bb">
-                <div class="col-lg-1 d-flex align-items-center">
-                  Basic data
-                </div>
-                <div class="col-lg-9 bl">
-                  <div class="row mt-2">
-                    <div class="col-4">
-                      <button type="button" class="btn btn-primary w-100">Today</button>
-                    </div>
-                    <div class="col-4">
-                      <button type="button" class="btn btn-primary w-100">Month</button>
-                    </div>
-                    <div class="col-4">
-                      <input type="date" class="form-control">
-                    </div>
-                  </div>
-                  <div class="row mt-2">
-                    <div class="col-4">
-                      <button type="button" class="btn btn-primary w-100">Yesterday</button>
-                    </div>
-                    <div class="col-4">
-                      <button type="button" class="btn btn-primary w-100">Year</button>
-                    </div>
-                    <div class="col-4">
-                      <input type="date" class="form-control">
-                    </div>
-                  </div>
-                  <div class="row mt-2">
-                    <div class="col-4">
-                      <input type="text" class="form-control" placeholder="Personal Code">
-                    </div>
-                    <div class="col-4">
-                      <input type="text" class="form-control" placeholder="Name">
-                    </div>
-                    <div class="col-4">
-                      <input type="text" class="form-control" placeholder="Surname">
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg bl">
-                    <div class="row mt-2">
-                      <div class="col">
-                        <button type="button" class="btn btn-primary w-100">Search</button>
-                      </div>
-                    </div>
-                    <div class="row mt-2">
-                      <div class="col">
-                        <button type="button" class="btn btn-primary w-100" id="expand">Expand</button>
-                      </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="extendedSearch">
-            <div class="d-flex bg-white p-3">
-              <div class="row">
-                <div class="col-lg-1 col-md-12 d-flex align-items-center justify-content-center">
-                  Extended search
-                </div>
-                <div class="col-lg-9 col-md-12 bl">
-                  <div class="row">
-                    <div class="col-2">
-                      <input type="text" class="form-control" placeholder="Doctor">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control" placeholder="Status">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control" placeholder="SSK-code">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control" placeholder="SSK-code">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control" placeholder="Sending doctor">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control" placeholder="Patient status">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control mt-2" placeholder="Ex-room">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control mt-2" placeholder="Sending departament">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control mt-2" placeholder="Ambulatory number">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control mt-2" placeholder="Type">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control mt-2" placeholder="Modality">
-                    </div>
-                    <div class="col-2">
-                      <input type="text" class="form-control mt-2" placeholder="Institution">
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg mt-md-2 bl">
-                  <div class="row">
-                    <div class="col">
-                      <button type="button" class="btn btn-primary w-100">Clear</button>
-                    </div>
-                  </div>
-                  <div class="row mt-2">
-                    <div class="col">
-                      <button type="button" class="btn btn-primary w-100">Save</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col mt-3" id="database">
+            <div class="col" id="database">
               <div class="row">
                 <div class="col-12 bg-white boxShadow box">
                   <div class="row head py-2 d-flex align-items-center">
                     <div class="col d-flex align-items-center">
-                      My analysises:
+                      My analyzes:
                     </div>
                     {% if doctor.accepted_analysis_count == 5 %}
                     <div class="col errorBox me-3">
@@ -206,7 +89,7 @@
                 <div class="col-12 bg-white boxShadow box">
                   <div class="row head py-2 d-flex align-items-center">
                     <div class="col d-flex align-items-center">
-                      All analysises (choose):
+                      All analyzes (choose):
                     </div>
                   </div>
                   <div class="row" id="tableDatabase">

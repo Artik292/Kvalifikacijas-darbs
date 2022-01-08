@@ -1,19 +1,11 @@
 from django.shortcuts import render, redirect, reverse
-from django.views import View
-from django.urls import reverse_lazy
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.http import HttpResponseRedirect
 from account.forms import AccountAuthenticationForm
-from dicom_viewer.models import Dicom
-from dicom_viewer import urls
-from account.models import User, Doctor, Patient
 
-def checkUserForAuth(request,user):
+
+def checkUserForAuth(request, user):
         if user.is_doctor:
             return redirect('dataBaseAll')
         elif user.is_patient:

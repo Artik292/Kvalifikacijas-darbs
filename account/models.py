@@ -101,7 +101,7 @@ class DoctorApplication(AbstractBaseUser):
     is_doctor = models.BooleanField(default=True)
     first_name = models.CharField(max_length=100, unique=False)
     last_name = models.CharField(max_length=100, unique=False)
-    pers_code = models.CharField(primary_key=True,max_length=11, unique=True)
+    pers_code = models.CharField(primary_key=True,max_length=11, validators=[RegexValidator(regex='^.{11}$', message='Length has to be 11.', code='nomatch')], unique=True)
     sert_nr = models.CharField(unique=True, max_length=11)
     spec = models.CharField(max_length=30)
     free_text = models.TextField(blank=True)

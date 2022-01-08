@@ -47,7 +47,11 @@
                                 Patient Name:
                             </td>
                             <td>
+                                {% if dicom.status == 'Uploaded' %}
                                 <input type="text" name="patient_name" value="{{ dicom.patient_name }}" class="form-control">
+                                {% else %}
+                                {{ dicom.patient_name }}
+                                {% endif %}
                                 {% if form.patient_name.errors %}
                                     {{ form.patient_name.errors }}
                                 {% endif %}
@@ -66,7 +70,11 @@
                                 Study date:
                             </td>
                             <td>
+                                {% if dicom.status == 'Uploaded' %}
                                 <input type="date" value="{{ dicom.study_date }}" class="form-control" name="study_date">
+                                {% else %}
+                                {{ dicom.study_date }}
+                                {% endif %}
                                 {% if form.study_date.errors %}
                                     {{ form.study_date.errors }}
                                 {% endif %}
@@ -93,7 +101,11 @@
                                 Your info about analysis:
                             </td>
                             <td>
+                                {% if dicom.status == 'Uploaded' %}
                                 <textarea name="textArea" class="form-control" rows="3">{{ dicom.textArea }}</textarea>
+                                {% else %}
+                                {{ dicom.textArea }}
+                                {% endif %}
                                 {% if form.textArea.errors %}
                                     {{ form.textArea.errors }}
                                 {% endif %}
@@ -102,7 +114,12 @@
                     </tbody>
                 </table>
                 <a href="{% url 'analysis' %}" class="btn btn-warning">Go back</a>
+                {% if dicom.status == 'Uploaded' %}
                 <button type="submit" class="btn btn-success">Update info</button>
+                {% else %}
+                <p class="errorMessage mt-2">You cannot change information about this anlysis.</p>
+                {% endif %}
+
             </form>
         </div>
     </div>

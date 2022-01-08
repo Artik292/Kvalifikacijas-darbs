@@ -85,7 +85,4 @@ class Dicom(models.Model):
         self.dicom_file.delete()
         self.file_jpg.delete()
         super().delete(*args, **kwargs)
-    
-    def save_status(self):
-        self.status = 'In work'
-        self.save()
+

@@ -333,7 +333,7 @@ def accept_view(request,slide_id):
         doctor.accepted_analysis_count += 1
         dicom = Dicom.objects.get(id=slide_id)
         dicom.study_doctor = user
-        dicom.save_status()
+        dicom.status = 'In work'
         dicom.save()
         doctor.save()
         return redirect('dataBaseAll')
@@ -371,7 +371,8 @@ def finish(request,slide_id):
 def archive(request):
     template_name = 'main/archive.html'
     title = 'Archive'
-    dicoms = Dicom.objects.filter(status='Finished')
+    user = request.user
+    dicoms = Dicom.objects.filter(status='Finished',user=user)
 
     # PAGINATOR SETTING
     paginator = Paginator(dicoms, 10)

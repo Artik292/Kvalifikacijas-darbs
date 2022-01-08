@@ -12,6 +12,7 @@ from .forms import UserRegistrationForm
 class DoctorApplicationAdmin(admin.ModelAdmin):
 
     actions = ['Approve']
+    list_display = ('email','pers_code','spec','sert_nr')
 
     def Approve(self,request,queryset):
         user = queryset.first()
@@ -28,7 +29,7 @@ class DoctorApplicationAdmin(admin.ModelAdmin):
         queryset.delete()
 
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('user',)
+    list_display = ('user','regions','chronic_diseases')
 
     def delete_queryset(self, request, queryset):
         patient = queryset.first()
@@ -37,7 +38,7 @@ class PatientAdmin(admin.ModelAdmin):
         queryset.delete()
 
 class DoctorAdmin(admin.ModelAdmin):
-    list_display = ('user',)
+    list_display = ('user','spec','sert_nr')
     readonly_fields = ['accepted_analysis_count']
 
     def delete_queryset(self, request, queryset):
