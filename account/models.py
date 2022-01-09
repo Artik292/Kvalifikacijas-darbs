@@ -76,11 +76,11 @@ class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key = True)
     regions = models.CharField(max_length=100,blank=False)
     uses_medicaments = models.CharField(max_length=10,choices=YES_NO,default='no')
-    medicaments = models.TextField(blank=True)
+    medicaments = models.TextField(blank=True, null=True)
     uses_alcohol = models.CharField(max_length=10,choices=YES_NO,default='no')
     is_smoking = models.CharField(max_length=10,choices=YES_NO,default='no')
     are_chronic_diseases = models.CharField(max_length=10,choices=YES_NO,default='no')
-    chronic_diseases = models.TextField(blank=True)
+    chronic_diseases = models.TextField(blank=True,null=True)
 
 
 class Doctor(models.Model):

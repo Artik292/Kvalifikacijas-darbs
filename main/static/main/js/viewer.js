@@ -114,22 +114,34 @@ $(document).ready(function() {
       //-------------------BRIGHTNESS------------------------------
       var sliderBrightness = document.getElementById('brightnessControll');
       sliderBrightness.oninput = function () {
-        xray.brightness(sliderBrightness.value);
-        layer.batchDraw();
+        if (sliderBrightness.value > 1 || sliderBrightness.value < -1 ){
+          return;
+        } else {
+          xray.brightness(sliderBrightness.value);
+          layer.batchDraw();
+        }
       };
   
       //------------------------CONTRAST--------------------------------------
       var contrastControll = document.getElementById('contrastControll');
       contrastControll.oninput = function () {
-        xray.contrast(parseFloat(contrastControll.value));
-        layer.batchDraw();
+        if (contrastControll.value > 100 || contrastControll.value < -100 ){
+          return;
+        } else {
+          xray.contrast(parseFloat(contrastControll.value));
+          layer.batchDraw();
+        }
       };
   
       //---------------------ROTATE----------------------------------
       var rotationControll = document.getElementById('rotationControll');
       rotationControll.oninput = function () {
-        xray.rotation(rotationControll.value);
-        layer.batchDraw();
+        if (rotationControll.value > 360 || rotationControll.value < 0 ){
+          return;
+        } else {
+          xray.rotation(Number(rotationControll.value));
+          layer.batchDraw();
+        }
       };
   
   
@@ -140,43 +152,46 @@ $(document).ready(function() {
       var lastPointY;
       var scaleControll = document.getElementById('scaleControll');
       scaleControll.oninput = function () {
-  
-        for (let i = 0; i < arrayOfGroups.length; i++) {
-          for (let j = 0; j < arrayOfGroups[i].children.length; j++) {
-  
-            switch (arrayOfGroups[i].children[j].getClassName()) {
-              case 'Circle':
-                oldX = arrayOfGroups[i].attrs.oldCoord[j][0];
-                oldY = arrayOfGroups[i].attrs.oldCoord[j][1];
-                arrayOfGroups[i].children[j].setAttrs({
-                  x:scaleBy([oldX,oldY,0,0],scaleControll.value)[0],
-                  y:scaleBy([oldX,oldY,0,0],scaleControll.value)[1]
-                })
-                lastPointX =  arrayOfGroups[i].children[j].getAttr('x');
-                lastPointY =  arrayOfGroups[i].children[j].getAttr('y');
-  
-                break;
-  
-              case 'Line':
-                var pointsArray = arrayOfGroups[i].attrs.oldCoord[j];
-                arrayOfGroups[i].children[j].setAttr('points',scaleBy(pointsArray,scaleControll.value));
-                break;
-  
-              case 'Label':
-                arrayOfGroups[i].children[j].setAttrs({
-                  x: lastPointX+2,
-                  y: lastPointY+2
-                });
-                break;
+        if (scaleControll.value > 3 || scaleControll.value < 0.5 ){
+          return;
+        } else {
+          for (let i = 0; i < arrayOfGroups.length; i++) {
+            for (let j = 0; j < arrayOfGroups[i].children.length; j++) {
+    
+              switch (arrayOfGroups[i].children[j].getClassName()) {
+                case 'Circle':
+                  oldX = arrayOfGroups[i].attrs.oldCoord[j][0];
+                  oldY = arrayOfGroups[i].attrs.oldCoord[j][1];
+                  arrayOfGroups[i].children[j].setAttrs({
+                    x:scaleBy([oldX,oldY,0,0],scaleControll.value)[0],
+                    y:scaleBy([oldX,oldY,0,0],scaleControll.value)[1]
+                  })
+                  lastPointX =  arrayOfGroups[i].children[j].getAttr('x');
+                  lastPointY =  arrayOfGroups[i].children[j].getAttr('y');
+    
+                  break;
+    
+                case 'Line':
+                  var pointsArray = arrayOfGroups[i].attrs.oldCoord[j];
+                  arrayOfGroups[i].children[j].setAttr('points',scaleBy(pointsArray,scaleControll.value));
+                  break;
+    
+                case 'Label':
+                  arrayOfGroups[i].children[j].setAttrs({
+                    x: lastPointX+2,
+                    y: lastPointY+2
+                  });
+                  break;
+              }
             }
+    
           }
-  
+    
+          xray.scale({ x: parseFloat(scaleControll.value), y: parseFloat(scaleControll.value) });
+    
+          layer.batchDraw();
+          layer2.batchDraw();
         }
-  
-        xray.scale({ x: parseFloat(scaleControll.value), y: parseFloat(scaleControll.value) });
-  
-        layer.batchDraw();
-        layer2.batchDraw();
   
       };
   
@@ -231,14 +246,11 @@ $(document).ready(function() {
       layer2.batchDraw();
       stage.on('mousemove', function(){
   
-       // console.log(getRelativePointerPosition(stage));
       })
   
       //-----------------------TEXT----------------------
   
   
-      // since this text is inside of a defined area, we can center it using
-      // align: 'center'
       var complexText = new Konva.Text({
         x: 10,
         y: 10,
@@ -342,7 +354,6 @@ $(document).ready(function() {
                 });
   
                 var label = new Konva.Label({
-                  //x: (x2<x1)? x2-text.width()-2:x2+2,
                   x:x2+2,
                   y: y2+2,
                   opacity:0.9

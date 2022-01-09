@@ -25,6 +25,7 @@ urlpatterns = [
     path('finish/<int:slide_id>',finish,name='finish'),
     path('archive',archive,name='archive'),
     path('declineverdict/<int:slide_id>',declineVerdict,name='declineVerdict'),
+    path('is-not-computer',is_not_computer,name='is-not-copmuter')
 ]
 
 

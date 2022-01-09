@@ -123,7 +123,7 @@
     
                       <div class="form-outline">
                         <input type="text" id="medicaments" class="form-control form-control-lg enter" name="medicaments" disabled/>
-                        <label class="form-label" for="emailAddress">Medicaments</label>
+                        <label class="form-label" for="medicaments">Medicaments</label>
                       </div>
   
                       {% if form2.medicaments.errors %}
@@ -180,7 +180,7 @@
         $(enter).removeAttr('disabled');
       } else {
         $(enter).attr('disabled','disabled');
-        $(enter).val('');
+        // $(enter).val('');
       }
     })
   </script>

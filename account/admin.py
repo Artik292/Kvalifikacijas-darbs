@@ -6,19 +6,31 @@ from dicom_viewer.models import Dicom
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
-from .forms import UserRegistrationForm
+from .forms import PatientInfoForm, UserRegistrationForm
 
 
 class DoctorApplicationAdmin(admin.ModelAdmin):
 
+    readonly_fields = ['password']
+
     actions = ['Approve']
     list_display = ('email','pers_code','spec','sert_nr')
+
+    fieldsets = (
+        ("Users data", {
+            'fields': ("email","pers_code","first_name","last_name","password")
+        }),
+        ("Doctors data",{
+            'fields':("spec","sert_nr","free_text")
+        }),
+
+    )
 
     def Approve(self,request,queryset):
         user = queryset.first()
         for user in queryset:
             try:
-                if User.objects.get(email=user.email) or User.objects(pers_code=user.pers_code):
+                if User.objects.filter(email=user.email).exists() or User.objects.filter(pers_code=user.pers_code).exists():
                     self.message_user(request, "User with this email or personal code already exists", level=messages.ERROR)
                     return
             except:
@@ -27,15 +39,41 @@ class DoctorApplicationAdmin(admin.ModelAdmin):
                 newDoctor = Doctor.objects.create(user=newUser,sert_nr=user.sert_nr,free_text=user.free_text,spec=user.spec)
                 newDoctor.save()
         queryset.delete()
+    
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+class PatientChangeForm(forms.ModelForm):
+
+    class Meta:
+        model = Patient
+        fields = ('user',)
 
 class PatientAdmin(admin.ModelAdmin):
     list_display = ('user','regions','chronic_diseases')
+
+    form = PatientInfoForm
+
+    readonly_fields = ['user']
+
+    fieldsets = (
+        ("Based on user", {
+            'fields': ("user",)
+        }),
+        ("Patients info",{
+            'fields': ("is_smoking","uses_alcohol","uses_medicaments","medicaments","are_chronic_diseases","chronic_diseases")
+        }),
+    )
 
     def delete_queryset(self, request, queryset):
         patient = queryset.first()
         for patient in queryset:
             User.objects.get(patient=patient).delete()
         queryset.delete()
+
+    def has_add_permission(self, request, obj=None):
+        return False
 
 class DoctorAdmin(admin.ModelAdmin):
     list_display = ('user','spec','sert_nr')
@@ -52,6 +90,8 @@ class DoctorAdmin(admin.ModelAdmin):
                 dicom.status = 'Uploaded'
         queryset.delete()
 
+    def has_add_permission(self, request, obj=None):
+        return False
 
 class UserChangeForm(forms.ModelForm):
 
@@ -73,12 +113,12 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('pers_code','first_name','last_name')}),
-        ('Role', {'fields': ('is_admin','is_staff','is_superuser','is_patient','is_doctor')}),
+        ('Role', {'fields': ('is_admin','is_patient','is_doctor')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ("email","first_name","last_name","pers_code",'is_admin','is_staff','is_superuser','is_patient','is_doctor',"password1","password2")}
+            'fields': ("email","first_name","last_name","pers_code",'is_admin','is_patient','is_doctor',"password1","password2")}
         ),
     )
     search_fields = ('email',)
@@ -106,11 +146,11 @@ class UserAdmin(BaseUserAdmin):
                     if not Patient.objects.filter(user=obj).exists():
                         Patient.objects.create(user=obj).save()
                     if Doctor.objects.filter(user=obj).exists():
-                        messages.warning(request, 'Now this user ir patient. All data in doctors accaount was deleted')
+                        messages.warning(request, 'Now this user ir patient. All data in doctors account was deleted!')
                         Doctor.objects.filter(user=obj).delete()
                 if obj.is_doctor: 
                     if not Doctor.objects.filter(user=obj).exists():
-                        messages.warning(request, 'You created new user, but users doctor info is empty')
+                        messages.warning(request, 'Now this user ir doctor. Provide information about doctors serificate and specialization!')
                         Doctor.objects.create(user=obj).save()
                     if Patient.objects.filter(user=obj).exists():
                         Patient.objects.filter(user=obj).delete()

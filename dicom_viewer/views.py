@@ -18,6 +18,7 @@ from django.views.generic import View
 from datetime import datetime, date
 from django.core.paginator import Paginator
 from account.models import User, Doctor, Patient
+from django import forms
 
 
 import pathlib
@@ -29,6 +30,7 @@ from PIL import Image
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def dataBaseAll(request):
+    checkDevice(request)
     title = 'Data Base'
     dicoms = Dicom.objects.exclude(status='Finished')
     doctor = Doctor.objects.get(user = request.user)
@@ -64,6 +66,7 @@ def dataBaseAll(request):
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def dataBase(request,slide_id):
+    checkDevice(request)
     template = "main/database.html"
     title = "Database"
     strId = int(slide_id)
@@ -105,7 +108,7 @@ def dataBase(request,slide_id):
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def viewer(request,slide_id):
-
+    checkDevice(request)
     dicom = Dicom.objects.get(id = slide_id)
     patient = Patient.objects.get(user=dicom.user)
     user = request.user
@@ -115,7 +118,6 @@ def viewer(request,slide_id):
     image = dicom .file_jpg.url
     pixel_spacing = [dicom.pixel_spacing_x, dicom.pixel_spacing_y]
     user_name = dicom.patient_name
-    # "Jānis Berziņš, 102093-12122, 2021/06-03\n\nSērija:CT, ART 1.25mm\n\nAttēls: 1 / 377\n\nPalielinājums:1.17\n\nW:255 C:127",
 
     if dicom.study_doctor == user:
         canEdit = True
@@ -125,7 +127,7 @@ def viewer(request,slide_id):
 
     if request.method == 'POST':
         form = AddMedicalVerdict(request.POST, instance=dicom)
-        if form.is_valid():
+        if form.is_valid() and dicom.status == 'In work':
             dicom.status = 'Checked'
             form.save()
             return redirect('dataBaseAll')
@@ -199,17 +201,17 @@ def upload(request):
         'error' : error
     })
 
-def from_dcm_to_jpg(dicom,dicom_file,id,error):    
-    ds = pydicom.dcmread(os.path.join(dicom_file.path))
-    new_image = ds.pixel_array
-    scaled_image = (np.maximum(new_image, 0) / new_image.max()) * 255.0
-    scaled_image = np.uint8(scaled_image)
-    if scaled_image.ndim > 2:
-        newid = Dicom.objects.get(id=id)
-        newid.delete()
-        error = True
-        return error
+def from_dcm_to_jpg(dicom,dicom_file,id,error):
     try:
+        ds = pydicom.dcmread(os.path.join(dicom_file.path))
+        new_image = ds.pixel_array
+        scaled_image = (np.maximum(new_image, 0) / new_image.max()) * 255.0
+        scaled_image = np.uint8(scaled_image)
+        if scaled_image.ndim > 2:
+            newid = Dicom.objects.get(id=id)
+            newid.delete()
+            error = True
+            return error
         final_image = Image.fromarray(scaled_image)
         image_name = str(id) + ".jpg"
         final_image.save(MEDIA_ROOT+'/dicoms/img/'+image_name)
@@ -230,11 +232,12 @@ def from_dcm_to_jpg(dicom,dicom_file,id,error):
 @login_required(login_url='home')
 def uploadEdit(request, pk):
     context = {}
-
+    user = request.user
     dicom = Dicom.objects.get(id = pk)
     if dicom.status == 'Finished':
         return redirect('archive')
-
+    if dicom.user != user:
+        return redirect('analysis')
     template_name = 'main/uploadEdit.html'
     title = "Upload info about your analysis"
 
@@ -300,20 +303,26 @@ def analysis(request):
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def uploadView(request,pk):
+    user = request.user
     title = 'View your analysis'
     template_name = 'main/uploadView.html'
     dicom = Dicom.objects.get(id=pk)
-    link = request.META.get('HTTP_REFERER')
-    return render(request, template_name, {
-        'title':title,
-        'dicom':dicom,
-        'link':link,
-    })
+    if dicom.user == user:
+
+        return render(request, template_name, {
+            'title':title,
+            'dicom':dicom,
+        })
+    else:
+        return redirect('analysis')
 
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def deleteDicom(request,pk):
     dicom = Dicom.objects.get(id = pk)
+    user = request.user
+    if dicom.user != user:
+        return redirect('analysis')
     if dicom.study_doctor:
         doctor = Doctor.objects.get(user = dicom.study_doctor)
         doctor.accepted_analysis_count -= 1
@@ -324,14 +333,15 @@ def deleteDicom(request,pk):
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def accept_view(request,slide_id):
+    checkDevice(request)
     user = request.user
     doctor = Doctor.objects.get(user = user)
+    dicom = Dicom.objects.get(id=slide_id)
 
-    if doctor.accepted_analysis_count == 5:
+    if doctor.accepted_analysis_count == 5 or dicom.study_doctor or dicom.status != 'Uploaded':
         return redirect('dataBaseAll')
     else: 
         doctor.accepted_analysis_count += 1
-        dicom = Dicom.objects.get(id=slide_id)
         dicom.study_doctor = user
         dicom.status = 'In work'
         dicom.save()
@@ -341,14 +351,16 @@ def accept_view(request,slide_id):
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def decline_view(request,slide_id):
+    checkDevice(request)
     user = request.user
     dicom = Dicom.objects.get(id=slide_id)
-    doctor = Doctor.objects.get(user = user)
-    doctor.accepted_analysis_count -= 1
-    dicom.study_doctor = None
-    dicom.status = 'Uploaded'
-    doctor.save()
-    dicom.save()
+    if dicom.status == 'In work' and dicom.study_doctor == user:
+        doctor = Doctor.objects.get(user = user)
+        doctor.accepted_analysis_count -= 1
+        dicom.study_doctor = None
+        dicom.status = 'Uploaded'
+        doctor.save()
+        dicom.save()
     return redirect('dataBaseAll')
 
 @login_required(login_url='home')
@@ -356,14 +368,13 @@ def decline_view(request,slide_id):
 def finish(request,slide_id):
     user = request.user
     dicom = Dicom.objects.get(id=slide_id)
-    if dicom.user == user:
-        if dicom.status == 'Finished':
-            return redirect('archive')
+    if dicom.user == user and dicom.status == 'Checked':
         doctor = Doctor.objects.get(user=dicom.study_doctor)
         doctor.accepted_analysis_count -= 1
         dicom.status = 'Finished'
         dicom.save()
         doctor.save()
+        return redirect('archive')
     return redirect('analysis')
 
 @login_required(login_url='home')
@@ -406,7 +417,7 @@ def declineVerdict(request,slide_id):
     user = request.user
     dicom = Dicom.objects.get(id = slide_id)
     doctor = Doctor.objects.get(user = dicom.study_doctor)
-    if dicom.user == user:
+    if dicom.user == user and dicom.status=="Checked":
         dicom.study_doctor = None
         dicom.status = 'Uploaded'
         dicom.medical_verdict = None
@@ -414,3 +425,13 @@ def declineVerdict(request,slide_id):
         dicom.save()
         doctor.save()
     return redirect('analysis')
+
+
+def checkDevice(request):
+    if not request.user_agent.is_pc:
+        return redirect('is-not-computer')
+    else:
+        return
+
+def is_not_computer(request):
+    return render(request,'main/isMobile.html')

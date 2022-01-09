@@ -13,7 +13,17 @@ class PatientRegistrationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("email","first_name","last_name","pers_code","password1","password2")
+    
+    def clean_pers_code(self):
+        code = self.cleaned_data.get("pers_code")
+        code_lowercase = code.lower()
+        contains_letters = code_lowercase.islower()
 
+        if contains_letters:
+            raise forms.ValidationError("Pers code can only contain numbers")
+        
+        return code
+        
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
@@ -44,6 +54,20 @@ class PatientInfoForm(forms.ModelForm):
             'are_chronic_diseases' : forms.Select(attrs={'class':'form-select form-select-lg select'}),
         }
 
+    def clean_medicaments(self):
+        medicaments = self.cleaned_data['medicaments']
+        uses_medicaments = self.cleaned_data['uses_medicaments']
+        if uses_medicaments != 'yes':
+            medicaments = None
+        return medicaments
+    
+    def clean_chronic_diseases(self):
+        diseases = self.cleaned_data["chronic_diseases"]
+        are_chronic_diseases = self.cleaned_data["are_chronic_diseases"]
+        if are_chronic_diseases != 'yes':
+            diseases = None
+        return diseases
+
 class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
@@ -58,6 +82,15 @@ class UserRegistrationForm(UserCreationForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
         return password2
+    
+    def clean_pers_code(self):
+        code = self.cleaned_data.get("pers_code")
+        code_lowercase = code.lower()
+        contains_letters = code_lowercase.islower()
+        if contains_letters:
+            raise forms.ValidationError("Pers code can only contain numbers")
+        
+        return code
 
     @transaction.atomic()
     def save(self, commit=True):

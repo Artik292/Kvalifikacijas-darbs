@@ -21,6 +21,13 @@
                         <input class="form-control" type="file" id="formFile" name="dicom_file">
                     </div>
                 </div>
+                {% if form.dicom_file.errors  %}
+                <div class="row mt-2">
+                    <div class="col">
+                        {{ form.dicom_file.errors }}
+                    </div>
+                </div>
+                {% endif %}
                 <div class="row mt-2">
                     <div class="col">
                         <label for="infoArea" class="form-label">2. Please provide information about your analysis</label>

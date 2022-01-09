@@ -147,7 +147,6 @@ html {
 
 #instruments {
   flex: 0 1 auto;
-  overflow: auto;
   background-color: #292929;
   color: white; }
   #instruments i {
