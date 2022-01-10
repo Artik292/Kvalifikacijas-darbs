@@ -156,7 +156,7 @@ def viewer(request,slide_id):
     }
     return render(request, template, context=context)   
 
-
+# View where user can uplaod dicom 
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def upload(request):
@@ -168,16 +168,21 @@ def upload(request):
     }
     if request.method == 'POST':
         form = UploadDicom(request.POST, request.FILES)
+        # Check if form  is valid
         if form.is_valid():
+            # get uploaded file extension
             dicom_file = request.FILES.get("dicom_file", None)
             file_name = dicom_file.name
             file_extension = pathlib.Path(file_name).suffix
+            # check if uploaded file is .dcm format
             if file_extension == '.dcm' or file_extension == '.DCM':
                 note = form.save(commit=False)
                 note.user = request.user
                 note.uploaded_date = date.today()
                 form.save()
+                # call function that returns true if could not create an image from file, or false if could
                 error = from_dcm_to_jpg(note,note.dicom_file,note.id,error)
+                # if error is true system shows error message
                 if error:
                     return render(request, template,{
                         'title' : title,
@@ -185,6 +190,7 @@ def upload(request):
                         'error' : error
                     })
                 else:
+                    # if system made image from file user will be redirected to the page where he could edit uploaded file
                     redirectUrl = 'uploadEdit/'+str(note.id)
                     print(redirectUrl)
                     return redirect(redirectUrl)
@@ -201,28 +207,38 @@ def upload(request):
         'error' : error
     })
 
+# function that creates image from dicom file and returns errors status (true or false)
 def from_dcm_to_jpg(dicom,dicom_file,id,error):
     try:
+        # read file with pydicom 
         ds = pydicom.dcmread(os.path.join(dicom_file.path))
+        # get pixel array
         new_image = ds.pixel_array
         scaled_image = (np.maximum(new_image, 0) / new_image.max()) * 255.0
         scaled_image = np.uint8(scaled_image)
+        # if array has more than two dimensions return false
         if scaled_image.ndim > 2:
             newid = Dicom.objects.get(id=id)
             newid.delete()
             error = True
             return error
+        # create image from pixel array 
         final_image = Image.fromarray(scaled_image)
         image_name = str(id) + ".jpg"
+        # save temporary image 
         final_image.save(MEDIA_ROOT+'/dicoms/img/'+image_name)
+        # save new image 
         dicom.file_jpg.save(str(image_name), File(open(os.path.join(MEDIA_ROOT+'/dicoms/img', str(image_name)), "rb"))) 
+        # save informatition from dicom file to the system database 
         dicom.save_dcm_data(ds=ds)
+        #remove temporary image
         os.remove(MEDIA_ROOT+'/dicoms/img/'+image_name)
         newid = Dicom.objects.get(id=id)
         newid.save()
         error = False
         return error
     except:
+        # return false if system cannot create image or save data
         newid = Dicom.objects.get(id=id)
         newid.delete()
         error = True

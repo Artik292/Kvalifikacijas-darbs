@@ -38,6 +38,7 @@ class DoctorApplicationAdmin(admin.ModelAdmin):
                 newUser.save()
                 newDoctor = Doctor.objects.create(user=newUser,sert_nr=user.sert_nr,free_text=user.free_text,spec=user.spec)
                 newDoctor.save()
+                messages.success(request, 'New user and doctor was created.')
         queryset.delete()
     
     def has_add_permission(self, request, obj=None):

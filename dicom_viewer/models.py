@@ -41,8 +41,11 @@ class Dicom(models.Model):
     study_doctor = models.ForeignKey(User,related_name='Doctor',null=True,blank=True,on_delete=models.SET_NULL)
     medical_verdict = models.TextField(null=True)
 
+    # function that reads dicom file and saves information to the database fields
     def save_dcm_data(self, ds=None):
         try:
+            print(ds)
+            # get information about patient from file
             self.patient_id = ds.get('PatientID', 'missing')
             name = ds.get('PatientName', 'missing')
             name = str(name)
@@ -51,7 +54,7 @@ class Dicom(models.Model):
             self.modality = ds.get('Modality', 'missing')
             self.type = ds.get('TransmitCoilName ','missing')
             self.age = ds.get('PatientAge','missing')
-
+            # get date and convert it to the new format for html input type date
             date = ds.get('StudyDate', 'missing')
             if date != 'missing':
                 year = date[0:4]
@@ -59,28 +62,31 @@ class Dicom(models.Model):
                 day = date[6:8]
                 new_date = year + '-' + month + '-' + day
             self.study_date = new_date
-
+            # get image resolution
             rows = ds.get('Rows','missing')
             columns =  ds.get('Columns','missing')
             if rows!='missing' and columns!='missing':
                 imageSize = str(rows) + 'x' + str(columns)
             else:
                 imageSize = 'missing'
-
             self.image_size = imageSize
+            # get pixel spacing 
             pixel_spacing = ds.get('PixelSpacing','missing')
             if pixel_spacing != 'missing':
                 self.pixel_spacing_x = pixel_spacing[0]
                 self.pixel_spacing_y = pixel_spacing[1]
 
-            if self.image_size == 'missing':
+            # if file doesnt have image size or pixel spacing status is broken 
+            if self.image_size == 'missing' or pixel_spacing =='missing':
                 self.status = 'Broken'
             else:
+                # if everything is ok then status is uploaded
                 self.status = 'Uploaded'
             self.save()
         except:
             pass            
-
+    
+    #when user delets dicom analysis data from server deletes too
     def delete(self, *args, **kwargs):
         self.dicom_file.delete()
         self.file_jpg.delete()
