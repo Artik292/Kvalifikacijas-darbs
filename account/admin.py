@@ -30,17 +30,19 @@ class DoctorApplicationAdmin(admin.ModelAdmin):
         user = queryset.first()
         for user in queryset:
             try:
+                #check if this doctor already exists
                 if User.objects.filter(email=user.email).exists() or User.objects.filter(pers_code=user.pers_code).exists():
                     self.message_user(request, "User with this email or personal code already exists", level=messages.ERROR)
                     return
             except:
+                #data transfer from one table to anothers
                 newUser = User.objects.create(first_name=user.first_name,last_name=user.last_name,pers_code=user.pers_code,email=user.email,password=user.password,is_doctor=user.is_doctor)
                 newUser.save()
                 newDoctor = Doctor.objects.create(user=newUser,sert_nr=user.sert_nr,free_text=user.free_text,spec=user.spec)
                 newDoctor.save()
                 messages.success(request, 'New user and doctor was created.')
         queryset.delete()
-    
+    #admin cant create new doctor applications
     def has_add_permission(self, request, obj=None):
         return False
 
@@ -63,7 +65,7 @@ class PatientAdmin(admin.ModelAdmin):
             'fields': ("user",)
         }),
         ("Patients info",{
-            'fields': ("is_smoking","uses_alcohol","uses_medicaments","medicaments","are_chronic_diseases","chronic_diseases")
+            'fields': ("regions","is_smoking","uses_alcohol","uses_medicaments","medicaments","are_chronic_diseases","chronic_diseases")
         }),
     )
 
@@ -132,6 +134,13 @@ class UserAdmin(BaseUserAdmin):
             messages.error(request, "User cannot have multiple roles at the same time")
             return
         else:
+            code = obj.pers_code
+            code_lowercase = code.lower()
+            contains_letters = code_lowercase.islower()
+            if contains_letters:
+                messages.set_level(request, messages.ERROR)
+                messages.error(request, "Pers code can only contain numbers")
+                return
             if obj.is_admin or obj.is_staff or obj.is_superuser:
                 obj.is_patient = False
                 obj.is_doctor = False
@@ -147,11 +156,9 @@ class UserAdmin(BaseUserAdmin):
                     if not Patient.objects.filter(user=obj).exists():
                         Patient.objects.create(user=obj).save()
                     if Doctor.objects.filter(user=obj).exists():
-                        messages.warning(request, 'Now this user ir patient. All data in doctors account was deleted!')
                         Doctor.objects.filter(user=obj).delete()
                 if obj.is_doctor: 
                     if not Doctor.objects.filter(user=obj).exists():
-                        messages.warning(request, 'Now this user ir doctor. Provide information about doctors serificate and specialization!')
                         Doctor.objects.create(user=obj).save()
                     if Patient.objects.filter(user=obj).exists():
                         Patient.objects.filter(user=obj).delete()

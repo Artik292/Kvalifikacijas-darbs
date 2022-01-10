@@ -7,11 +7,16 @@ from django.contrib import messages
 from django.conf import settings
 from account.models import User, Doctor, Patient
 
+#this function renders registration template for patients
 def registration_view(request):
     context = {}
     if request.POST:
+        #get 2 forms
+        #form1 is for user creation
         form1 = PatientRegistrationForm(request.POST)
+        #form2 is for patient creation
         form2 = PatientInfoForm(request.POST)
+        #checks if both forms are valid
         if form1.is_valid() and form2.is_valid():
             user = form1.save()
             patient_info = form2.save(commit=False)
@@ -33,14 +38,16 @@ def registration_view(request):
         context['PatientInfoForm'] = form2
     return render(request, 'main/register.html', {'title': 'Registration', 'context' : context, 'form':form1, 'form2':form2}) 
 
-
+#this function renders template for doctors aplication
 def docAppl_view(request):
     context = {}
     title = 'Doc. Applications'
     if request.POST:
         form = ApplicationForm(request.POST)
+        #check form 
         if form.is_valid():
             form.save()
+            #if form was completed successfully, unregistrated user will be redirected to thank you page 
             return redirect('thankYouPage')
         else:
             context['ApplicationForm'] = form
@@ -50,6 +57,7 @@ def docAppl_view(request):
         context['ApplicationForm'] = form
     return render(request, 'main/doctorApplication.html', {'title': title, 'context' : context}) 
 
+#this function renders user their information
 def userInfo(request):
     user = request.user
     title = 'Information about user'

@@ -21,9 +21,11 @@ STATUS = (
     (Finished, 'Finished'),
 )
 
+#module for dicom files and information about this files
 class Dicom(models.Model):
     id = models.AutoField(primary_key=True)
     status = models.CharField(max_length=20, choices=STATUS)
+    #foreign key for dicom user who uploaded this dicom file (patient)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='Patient',on_delete=models.CASCADE)
     dicom_file = models.FileField(upload_to='dicoms/dcm', null=True)
     file_jpg = models.FileField(upload_to='dicoms/img', null=True, blank=True)
@@ -38,6 +40,7 @@ class Dicom(models.Model):
     age = models.TextField(null=True,blank=True)
     textArea = models.TextField(max_length=300,default=" ")
     uploaded_date = models.DateField(auto_now=True, blank=True)
+    #foreign key for dicom study doctor
     study_doctor = models.ForeignKey(User,related_name='Doctor',null=True,blank=True,on_delete=models.SET_NULL)
     medical_verdict = models.TextField(null=True)
 

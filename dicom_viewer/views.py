@@ -1,37 +1,28 @@
-from django.db.models import fields
-from django.forms.widgets import TimeInput
 from django.shortcuts import render, redirect, reverse
-from django.views import View
 from django.urls import reverse_lazy
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
-from django.core.files.storage import FileSystemStorage
 from .forms import UpdateDicom, UploadDicom, AddMedicalVerdict
 from .models import Dicom
 from django.core.files import File
-from django.core.files.base import ContentFile, File
+from django.core.files.base import File
 from .settings import MEDIA_ROOT
-from django.views.generic import View
-from datetime import datetime, date
+from datetime import date
 from django.core.paginator import Paginator
-from account.models import User, Doctor, Patient
-from django import forms
-
-
+from account.models import Doctor, Patient
 import pathlib
 import pydicom
 import os
 import numpy as np
 from PIL import Image
 
+#this function renders database template with all analyzes
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def dataBaseAll(request):
     checkDevice(request)
     title = 'Data Base'
+    #get all analyzes except for those with status is "Finished"
     dicoms = Dicom.objects.exclude(status='Finished')
     doctor = Doctor.objects.get(user = request.user)
 
@@ -62,7 +53,7 @@ def dataBaseAll(request):
         'doctor':doctor,
     })
 
-
+#this function renders database template with all analyzes and specific analysis that doctor has selected before
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def dataBase(request,slide_id):
@@ -70,7 +61,9 @@ def dataBase(request,slide_id):
     template = "main/database.html"
     title = "Database"
     strId = int(slide_id)
+    #get specific analysis
     analysis = Dicom.objects.get(id=slide_id)
+    #get all analyzes except for those with status is "Finished"
     dicom = Dicom.objects.exclude(status='Finished')
     doctor = Doctor.objects.get(user = request.user)
 
@@ -105,31 +98,35 @@ def dataBase(request,slide_id):
     return render(request,template,context)
 
 
+#this function renders viewer for dicom research for doctor
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def viewer(request,slide_id):
     checkDevice(request)
+    #get dicom info
     dicom = Dicom.objects.get(id = slide_id)
+    #get patient info
     patient = Patient.objects.get(user=dicom.user)
     user = request.user
     canEdit = False
-    checked = False
     template = "main/viewer.html"
     image = dicom .file_jpg.url
-    pixel_spacing = [dicom.pixel_spacing_x, dicom.pixel_spacing_y]
     user_name = dicom.patient_name
 
+    #check if doctor has accepted this dicom. If he is, he can view dicom and write medical reports
     if dicom.study_doctor == user:
         canEdit = True
 
-    if dicom.status == 'Checked':
-        checked = True
-
+    # if doctor wants to upload medical verdict about dicom
     if request.method == 'POST':
         form = AddMedicalVerdict(request.POST, instance=dicom)
+        #check if form is valid and status is in work. Otherwise doctor couldnt upload his medical verdict
         if form.is_valid() and dicom.status == 'In work':
+            #if everythings okay, dicom status changes to Checked
             dicom.status = 'Checked'
+            #form saves
             form.save()
+            #system redirects doctor to all analyzes
             return redirect('dataBaseAll')
         else:
             return render(request,template,context = {
@@ -138,7 +135,6 @@ def viewer(request,slide_id):
                 'pixel_spacing_y': dicom.pixel_spacing_y,
                 'user_name': user_name,
                 'dicom':dicom,
-                'checked':checked,
                 'canEdit':canEdit,
                 'form':form,
                 'patient':patient,
@@ -150,7 +146,6 @@ def viewer(request,slide_id):
         'pixel_spacing_y': dicom.pixel_spacing_y,
         'user_name': user_name,
         'dicom':dicom,
-        'checked':checked,
         'canEdit':canEdit,
         'patient':patient,
     }
@@ -244,14 +239,17 @@ def from_dcm_to_jpg(dicom,dicom_file,id,error):
         error = True
         return error
 
+#this function renders edit dicom template for patient
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 @login_required(login_url='home')
 def uploadEdit(request, pk):
     context = {}
     user = request.user
     dicom = Dicom.objects.get(id = pk)
+    #user cannot change finished dicoms. So if he manually enters link in url, system will redirect him to archive page
     if dicom.status == 'Finished':
         return redirect('archive')
+    #if patient is not the one who uploaded this dicom, system will redirect him to analysis page
     if dicom.user != user:
         return redirect('analysis')
     template_name = 'main/uploadEdit.html'
@@ -259,8 +257,10 @@ def uploadEdit(request, pk):
 
     form = UpdateDicom(instance=dicom)
 
+    #if patient uploads the form with dicom data
     if request.method == 'POST':
         form = UpdateDicom(request.POST, instance=dicom)
+        #check if form is valid
         if form.is_valid():
             form.save()
             return redirect('analysis')
@@ -283,11 +283,13 @@ def uploadEdit(request, pk):
         'context': context,
     })
 
+#this fucntion renders to patient his all uploaded analyzes on one page
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def analysis(request):
     title = 'Patient page'
     template_name = 'main/analysis.html'
+    #get all patients analyzes exept finished ones and order them from fresh to old  
     dicoms = Dicom.objects.filter(user = request.user).exclude(status='Finished').order_by('-id')
     
     # PAGINATOR SETTING
@@ -316,6 +318,7 @@ def analysis(request):
         'prev_url': prev_url,
     })
 
+#this function renders page where patient can view his uploaded dicom
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def uploadView(request,pk):
@@ -323,6 +326,7 @@ def uploadView(request,pk):
     title = 'View your analysis'
     template_name = 'main/uploadView.html'
     dicom = Dicom.objects.get(id=pk)
+    #if patient is really the one who uploaded this dicom, them system renders it
     if dicom.user == user:
 
         return render(request, template_name, {
@@ -330,22 +334,28 @@ def uploadView(request,pk):
             'dicom':dicom,
         })
     else:
+        #otherwise redirects to analysis page
         return redirect('analysis')
 
+#this function deletes dicoms from database
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def deleteDicom(request,pk):
     dicom = Dicom.objects.get(id = pk)
     user = request.user
+    #dicom could be deleted only by his owner. System checks dicoms patient. If fails, patient is redirected to analysis page
     if dicom.user != user:
         return redirect('analysis')
-    if dicom.study_doctor:
+    #if dicom is not finished and has study doctor then study doctors accepted analyzes count becomes one less
+    if dicom.study_doctor and dicom.status != 'Finished':
         doctor = Doctor.objects.get(user = dicom.study_doctor)
         doctor.accepted_analysis_count -= 1
         doctor.save()
+    #delete dicom
     dicom.delete()
     return redirect('analysis')
 
+#this function allows to accept dicom for doctors
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def accept_view(request,slide_id):
@@ -354,51 +364,64 @@ def accept_view(request,slide_id):
     doctor = Doctor.objects.get(user = user)
     dicom = Dicom.objects.get(id=slide_id)
 
+    #doctor cant have more than 5 accepted analyzes at once. Also if dicom has already have study doctor or its status if Uplaoded, doctor cant accept this dicom 
     if doctor.accepted_analysis_count == 5 or dicom.study_doctor or dicom.status != 'Uploaded':
         return redirect('dataBaseAll')
     else: 
+        #otherwise doctors accopted analyzes count becomes one more
         doctor.accepted_analysis_count += 1
         dicom.study_doctor = user
+        #dicom status becomes In work
         dicom.status = 'In work'
         dicom.save()
         doctor.save()
         return redirect('dataBaseAll')
 
+#this function allows decline dicoms for doctor
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_doctor,login_url='home')
 def decline_view(request,slide_id):
     checkDevice(request)
     user = request.user
     dicom = Dicom.objects.get(id=slide_id)
+    #doctor can decline dicom if its status is In work and he is the study doctor
     if dicom.status == 'In work' and dicom.study_doctor == user:
         doctor = Doctor.objects.get(user = user)
+        # doctors accepted analyzes count becomes one less
         doctor.accepted_analysis_count -= 1
         dicom.study_doctor = None
+        #dicoms status changes to Uploaded
         dicom.status = 'Uploaded'
         doctor.save()
         dicom.save()
     return redirect('dataBaseAll')
 
+#this function allows patient to finish the dicoms research
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def finish(request,slide_id):
     user = request.user
     dicom = Dicom.objects.get(id=slide_id)
+    #if patient is really the owner of this dicom and dicoms status is Checked
     if dicom.user == user and dicom.status == 'Checked':
         doctor = Doctor.objects.get(user=dicom.study_doctor)
+        # doctors accepted analyzes count becomes one less
         doctor.accepted_analysis_count -= 1
+        #dicoms status changes to Finished
         dicom.status = 'Finished'
         dicom.save()
         doctor.save()
         return redirect('archive')
     return redirect('analysis')
 
+#this function renders archive with all patients finished analyzes
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def archive(request):
     template_name = 'main/archive.html'
     title = 'Archive'
     user = request.user
+    #get all patients analyzes with status Finished
     dicoms = Dicom.objects.filter(status='Finished',user=user)
 
     # PAGINATOR SETTING
@@ -427,14 +450,17 @@ def archive(request):
         'prev_url': prev_url,
     })
 
+#this function allows patient to decline medical verdict from doctor
 @login_required(login_url='home')
 @user_passes_test(lambda u: u.is_patient,login_url='home')
 def declineVerdict(request,slide_id):
     user = request.user
     dicom = Dicom.objects.get(id = slide_id)
     doctor = Doctor.objects.get(user = dicom.study_doctor)
+    #check if patient is the owner of this dicom and dicom status is Chcecked
     if dicom.user == user and dicom.status=="Checked":
         dicom.study_doctor = None
+        #change dicom status to uploaded
         dicom.status = 'Uploaded'
         dicom.medical_verdict = None
         doctor.accepted_analysis_count -= 1
