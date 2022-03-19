@@ -47,7 +47,6 @@ class Dicom(models.Model):
     # function that reads dicom file and saves information to the database fields
     def save_dcm_data(self, ds=None):
         try:
-            print(ds)
             # get information about patient from file
             self.patient_id = ds.get('PatientID', 'missing')
             name = ds.get('PatientName', 'missing')
@@ -87,6 +86,7 @@ class Dicom(models.Model):
                 self.status = 'Uploaded'
             self.save()
         except:
+            self.status = 'Broken'
             pass            
     
     #when user delets dicom analysis data from server deletes too

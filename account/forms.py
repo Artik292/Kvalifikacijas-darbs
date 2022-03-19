@@ -150,3 +150,13 @@ class UpdatePatientInfo(forms.ModelForm):
     class Meta:
         model = User
         fields = ("email","first_name","last_name","pers_code")
+    
+
+    def clean_pers_code(self):
+        code = self.cleaned_data.get("pers_code")
+        code_lowercase = code.lower()
+        contains_letters = code_lowercase.islower()
+        if contains_letters:
+            raise forms.ValidationError("Pers code can only contain numbers")
+        
+        return code

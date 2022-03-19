@@ -170,7 +170,7 @@ def upload(request):
             file_name = dicom_file.name
             file_extension = pathlib.Path(file_name).suffix
             # check if uploaded file is .dcm format
-            if file_extension == '.dcm' or file_extension == '.DCM':
+            if file_extension == '.dcm' or file_extension == '.DCM':                    
                 note = form.save(commit=False)
                 note.user = request.user
                 note.uploaded_date = date.today()
@@ -187,7 +187,6 @@ def upload(request):
                 else:
                     # if system made image from file user will be redirected to the page where he could edit uploaded file
                     redirectUrl = 'uploadEdit/'+str(note.id)
-                    print(redirectUrl)
                     return redirect(redirectUrl)
             else:
                 error = True
@@ -240,8 +239,8 @@ def from_dcm_to_jpg(dicom,dicom_file,id,error):
         return error
 
 #this function renders edit dicom template for patient
-@user_passes_test(lambda u: u.is_patient,login_url='home')
 @login_required(login_url='home')
+@user_passes_test(lambda u: u.is_patient,login_url='home')
 def uploadEdit(request, pk):
     context = {}
     user = request.user

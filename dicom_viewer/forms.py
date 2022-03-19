@@ -17,7 +17,6 @@ class UploadDicom(forms.ModelForm):
     def clean_dicom_file(self):
         dicom_file = self.cleaned_data.get("dicom_file")
         size = dicom_file.size
-        print(size)
         if size > 10485760:
             #if size more than 10 mb returns error
             raise forms.ValidationError("File size is over 10 Mb.")

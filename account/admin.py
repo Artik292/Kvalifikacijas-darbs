@@ -11,7 +11,7 @@ from .forms import PatientInfoForm, UserRegistrationForm
 
 class DoctorApplicationAdmin(admin.ModelAdmin):
 
-    readonly_fields = ['password']
+    readonly_fields = ['email','pers_code','spec','sert_nr','password']
 
     actions = ['Approve']
     list_display = ('email','pers_code','spec','sert_nr')
@@ -29,19 +29,17 @@ class DoctorApplicationAdmin(admin.ModelAdmin):
     def Approve(self,request,queryset):
         user = queryset.first()
         for user in queryset:
-            try:
-                #check if this doctor already exists
-                if User.objects.filter(email=user.email).exists() or User.objects.filter(pers_code=user.pers_code).exists():
-                    self.message_user(request, "User with this email or personal code already exists", level=messages.ERROR)
-                    return
-            except:
-                #data transfer from one table to anothers
-                newUser = User.objects.create(first_name=user.first_name,last_name=user.last_name,pers_code=user.pers_code,email=user.email,password=user.password,is_doctor=user.is_doctor)
-                newUser.save()
-                newDoctor = Doctor.objects.create(user=newUser,sert_nr=user.sert_nr,free_text=user.free_text,spec=user.spec)
-                newDoctor.save()
-                messages.success(request, 'New user and doctor was created.')
-        queryset.delete()
+            #check if this doctor already exists
+            if User.objects.filter(email=user.email).exists() or User.objects.filter(pers_code=user.pers_code).exists():
+                self.message_user(request, "User with this email or personal code already exists", level=messages.ERROR)
+                return
+            #data transfer from one table to anothers
+            newUser = User.objects.create(first_name=user.first_name,last_name=user.last_name,pers_code=user.pers_code,email=user.email,password=user.password,is_doctor=user.is_doctor)
+            newUser.save()
+            newDoctor = Doctor.objects.create(user=newUser,sert_nr=user.sert_nr,free_text=user.free_text,spec=user.spec)
+            newDoctor.save()
+            messages.success(request, 'New user and doctor was created.')
+            queryset.delete()
     #admin cant create new doctor applications
     def has_add_permission(self, request, obj=None):
         return False
@@ -72,7 +70,10 @@ class PatientAdmin(admin.ModelAdmin):
     def delete_queryset(self, request, queryset):
         patient = queryset.first()
         for patient in queryset:
-            User.objects.get(patient=patient).delete()
+            user = User.objects.get(patient=patient)
+            dicom = Dicom.objects.filter(user=user)
+            dicom.delete()
+            user.delete()
         queryset.delete()
 
     def has_add_permission(self, request, obj=None):
@@ -85,12 +86,16 @@ class DoctorAdmin(admin.ModelAdmin):
     def delete_queryset(self, request, queryset):
         doctor = queryset.first()
         for doctor in queryset:
+            print(doctor)
             user = User.objects.get(doctor=doctor)
-            user.delete()
+            print(user)
             if Dicom.objects.filter(study_doctor=user).exists():
-                dicom = Dicom.objects.get(study_doctor=user)
-                dicom.medical_verdict = ''
-                dicom.status = 'Uploaded'
+                dicoms = Dicom.objects.filter(study_doctor=user)
+                for dicom in dicoms:
+                    dicom.medical_verdict = ''
+                    dicom.status = 'Uploaded'
+                    dicom.save()
+            user.delete()
         queryset.delete()
 
     def has_add_permission(self, request, obj=None):

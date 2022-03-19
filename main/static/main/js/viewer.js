@@ -64,6 +64,7 @@ $(document).ready(function() {
       xray.offsetY(y/2);
       xray.x(stage.width()/2);
       xray.y(stage.height()/2);
+      xray.cache();
       xray.filters([Konva.Filters.Contrast,Konva.Filters.Brighten]);
       layer.add(xray);
       stage.add(layer);
@@ -75,7 +76,7 @@ $(document).ready(function() {
         if (sliderBrightness.value > 1 || sliderBrightness.value < -1 ){
           return;
         } else {
-          xray.brightness(sliderBrightness.value);
+          xray.brightness(Number(sliderBrightness.value));
           layer.batchDraw();
         }
       };
@@ -85,7 +86,7 @@ $(document).ready(function() {
         if (contrastControll.value > 100 || contrastControll.value < -100 ){
           return;
         } else {
-          xray.contrast(parseFloat(contrastControll.value));
+          xray.contrast(Number(contrastControll.value));
           layer.batchDraw();
         }
       };
@@ -182,7 +183,6 @@ $(document).ready(function() {
             dx = Math.abs(x2 - x1);
             dy = Math.abs(y2 - y1);
             var L_mm = Math.sqrt( (dx * pixel_spacing_x)**2 + (dy * pixel_spacing_y)**2);
-            L_mm = L_mm / $('#scaleControll').val();
             text = new Konva.Text({
               text: L_mm.toFixed(3) + 'mm'
             });
